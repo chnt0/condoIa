@@ -20,6 +20,10 @@ class StorageService {
     await _storage.delete(key: AppConstants.tokenKey);
   }
 
+  Future<void> clearToken() async {
+    await deleteToken();
+  }
+
   // User methods (shared preferences)
   Future<void> saveUser(Usuario user) async {
     final prefs = await SharedPreferences.getInstance();
@@ -46,6 +50,10 @@ class StorageService {
   Future<void> deleteUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(AppConstants.userKey);
+  }
+
+  Future<void> clearUser() async {
+    await deleteUser();
   }
 
   // Clear all stored data
