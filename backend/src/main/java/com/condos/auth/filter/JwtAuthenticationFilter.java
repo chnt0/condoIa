@@ -85,12 +85,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.debug("Authenticated user: {} with role: {} for condominio: {}",
                     username, rol, condominioId);
 
+            // Continue the filter chain
+            filterChain.doFilter(request, response);
+
         } catch (Exception e) {
             log.error("Error processing JWT authentication: {}", e.getMessage(), e);
-            // Don't break the filter chain, let Spring Security handle it
-        } finally {
-            // Always continue the filter chain
+            // Continue filter chain even on error, let Spring Security handle it
             filterChain.doFilter(request, response);
+        } finally {
             // Always clear TenantContext to prevent memory leaks
             TenantContext.clear();
         }
