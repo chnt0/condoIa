@@ -31,7 +31,7 @@ public class Condominio {
     private Integer numUnidades;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "configuracion_json", columnDefinition = "jsonb")
+    @Column(name = "configuracion_json")
     private Map<String, Object> configuracionJson;
 
     @Column(nullable = false)
