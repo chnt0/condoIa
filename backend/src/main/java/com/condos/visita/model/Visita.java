@@ -4,6 +4,7 @@ import com.condos.condominio.model.Condominio;
 import com.condos.usuario.model.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "visitas")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"condominio", "usuario", "guardiaEntrada"})

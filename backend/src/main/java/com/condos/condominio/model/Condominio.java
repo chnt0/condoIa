@@ -2,6 +2,7 @@ package com.condos.condominio.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -13,6 +14,7 @@ import java.util.Map;
 @Entity
 @Table(name = "condominios")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Condominio {
