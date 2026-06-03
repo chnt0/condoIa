@@ -30,10 +30,11 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserInfoResponse> getCurrentUser(Authentication authentication) {
-        String username = authentication.getName();
+        // Principal is now userId as String
+        Long userId = Long.parseLong(authentication.getName());
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         UserInfoResponse userInfo = new UserInfoResponse(
                 usuario.getId(),

@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * JWT Authentication Filter that intercepts requests to validate JWT tokens.
@@ -69,15 +70,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Create authentication token with "ROLE_" prefix for Spring Security
             final String authority = "ROLE_" + rol.name();
+            final Long userId = jwtService.extractUserId(token);
+
+            // Store userId as principal for easy access in controllers
             final UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            username,
+                            userId.toString(),  // Principal is now userId as String
                             null,
                             Collections.singletonList(new SimpleGrantedAuthority(authority))
                     );
 
-            // Set authentication details
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // Store username in details for logging/audit
+            authentication.setDetails(Map.of("username", username, "userId", userId));
 
             // Set SecurityContext authentication
             SecurityContextHolder.getContext().setAuthentication(authentication);
