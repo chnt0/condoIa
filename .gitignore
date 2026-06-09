@@ -52,3 +52,4 @@ backend/mvnw.cmd
 *.class
 *.jar
 !backend/.mvn/wrapper/maven-wrapper.jar
+.superpowers/
