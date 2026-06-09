@@ -1,26 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/visitas/screens/detalle_visita_screen.dart';
 import '../../shared/providers/auth_provider.dart';
-
-// Temporary Home Screen placeholder
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inicio'),
-      ),
-      body: const Center(
-        child: Text('Home Screen - Coming Soon'),
-      ),
-    );
-  }
-}
+import '../../shared/widgets/main_scaffold.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -34,20 +18,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isSplash = state.matchedLocation == '/splash';
       final isLogin = state.matchedLocation == '/login';
 
-      // Show splash while loading
-      if (isLoading) {
-        return isSplash ? null : '/splash';
-      }
-
-      // Redirect to login if not authenticated
-      if (!isAuthenticated) {
-        return isLogin ? null : '/login';
-      }
-
-      // Redirect to home if authenticated and on splash/login
-      if (isSplash || isLogin) {
-        return '/home';
-      }
+      if (isLoading) return isSplash ? null : '/splash';
+      if (!isAuthenticated) return isLogin ? null : '/login';
+      if (isSplash || isLogin) return '/home';
 
       return null;
     },
@@ -62,7 +35,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const MainScaffold(),
+        routes: [
+          GoRoute(
+            path: 'visitas/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return DetalleVisitaScreen(visitaId: id);
+            },
+          ),
+        ],
       ),
     ],
   );
