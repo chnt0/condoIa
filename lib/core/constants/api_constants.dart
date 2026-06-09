@@ -5,6 +5,15 @@ class ApiConstants {
   static const String login = '$apiPrefix/auth/login';
   static const String me = '$apiPrefix/auth/me';
 
+  // Visitas
+  static const String visitas = '$apiPrefix/visitas';
+  static const String misVisitas = '$apiPrefix/visitas/mis-visitas';
+  static const String validarQr = '$apiPrefix/visitas/validar-qr';
+
+  static String visitaById(int id) => '$apiPrefix/visitas/$id';
+  static String cancelarVisita(int id) => '$apiPrefix/visitas/$id/cancelar';
+  static String qrImage(int id) => '$apiPrefix/visitas/$id/qr-image';
+
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
   static const Duration defaultTimeout = Duration(seconds: 30);

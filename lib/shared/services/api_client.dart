@@ -107,6 +107,67 @@ class ApiClient {
     }
   }
 
+  Future<List<dynamic>> getList(
+    String endpoint, {
+    Map<String, String>? headers,
+    Map<String, String>? queryParameters,
+  }) async {
+    try {
+      var url = Uri.parse('$baseUrl$endpoint');
+      if (queryParameters != null && queryParameters.isNotEmpty) {
+        url = url.replace(queryParameters: queryParameters);
+      }
+
+      final response = await http
+          .get(
+            url,
+            headers: _getHeaders(additionalHeaders: headers),
+          )
+          .timeout(timeout);
+
+      return _handleListResponse(response);
+    } on TimeoutException {
+      throw ApiException(
+        'La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.',
+        statusCode: 408,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        'Error de conexión. Verifique su internet e intente nuevamente.',
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> put(
+    String endpoint,
+    Map<String, dynamic> body, {
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .put(
+            url,
+            headers: _getHeaders(additionalHeaders: headers),
+            body: jsonEncode(body),
+          )
+          .timeout(timeout);
+
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw ApiException(
+        'La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.',
+        statusCode: 408,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        'Error de conexión. Verifique su internet e intente nuevamente.',
+      );
+    }
+  }
+
   Map<String, dynamic> _handleResponse(http.Response response) {
     final statusCode = response.statusCode;
 
@@ -139,6 +200,38 @@ class ApiClient {
 
     throw ApiException(
       errorMessage,
+      statusCode: statusCode,
+      apiError: apiError,
+    );
+  }
+
+  List<dynamic> _handleListResponse(http.Response response) {
+    final statusCode = response.statusCode;
+
+    if (statusCode >= 200 && statusCode < 300) {
+      if (response.body.isEmpty) return [];
+      try {
+        return jsonDecode(response.body) as List<dynamic>;
+      } catch (e) {
+        throw ApiException(
+          'Error al procesar la respuesta del servidor.',
+          statusCode: statusCode,
+        );
+      }
+    }
+
+    ApiError? apiError;
+    try {
+      if (response.body.isNotEmpty) {
+        final errorJson = jsonDecode(response.body) as Map<String, dynamic>;
+        apiError = ApiError.fromJson(errorJson);
+      }
+    } catch (e) {
+      // continue with generic message
+    }
+
+    throw ApiException(
+      apiError?.message ?? _getDefaultErrorMessage(statusCode),
       statusCode: statusCode,
       apiError: apiError,
     );
