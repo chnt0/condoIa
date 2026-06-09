@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../features/perfil/screens/gestion_screen.dart';
+import '../../features/usuarios/screens/gestion_screen.dart';
 import '../../features/perfil/screens/perfil_screen.dart';
 import '../../features/visitas/providers/visita_provider.dart';
 import '../../features/visitas/screens/crear_visita_screen.dart';
