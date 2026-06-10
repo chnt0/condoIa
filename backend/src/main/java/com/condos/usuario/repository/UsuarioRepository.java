@@ -1,5 +1,6 @@
 package com.condos.usuario.repository;
 
+import com.condos.usuario.model.Rol;
 import com.condos.usuario.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);
 
     List<Usuario> findByCondominioId(Long condominioId);
+
+    List<Usuario> findByCondominioIdAndRolAndActivo(Long condominioId, Rol rol, Boolean activo);
 
     boolean existsByUsername(String username);
 
