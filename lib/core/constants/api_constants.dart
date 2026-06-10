@@ -19,6 +19,13 @@ class ApiConstants {
   static String usuarioById(int id) => '$apiPrefix/usuarios/$id';
   static String usuarioEstado(int id) => '$apiPrefix/usuarios/$id/estado';
 
+  // Cuotas / Pagos
+  static const String cuotas = '$apiPrefix/cuotas';
+  static const String misCuotas = '$apiPrefix/cuotas/mis-cuotas';
+  static String cuotaDetalle(int id) => '$apiPrefix/cuotas/$id/detalle';
+  static String reportarPago(int cuotaUsuarioId) => '$apiPrefix/cuotas/$cuotaUsuarioId/reportar';
+  static String confirmarPago(int cuotaUsuarioId) => '$apiPrefix/cuotas/$cuotaUsuarioId/confirmar';
+
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
   static const Duration defaultTimeout = Duration(seconds: 30);
