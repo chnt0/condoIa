@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/pagos/providers/cuota_provider.dart';
+import '../../features/pagos/screens/cuotas_admin_screen.dart';
+import '../../features/pagos/screens/mis_cuotas_screen.dart';
 import '../../features/usuarios/screens/gestion_screen.dart';
 import '../../features/perfil/screens/perfil_screen.dart';
 import '../../features/visitas/providers/visita_provider.dart';
@@ -33,14 +36,18 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
   void _loadInitialData() {
     final user = ref.read(authProvider).user;
     if (user == null) return;
-    final notifier = ref.read(visitaProvider.notifier);
+    final visitaNotifier = ref.read(visitaProvider.notifier);
+    final cuotaNotifier = ref.read(cuotaProvider.notifier);
     switch (user.rol) {
       case Rol.usuario:
-        notifier.cargarMisVisitas();
+        visitaNotifier.cargarMisVisitas();
+        cuotaNotifier.cargarMisCuotas();
       case Rol.guardia:
+        visitaNotifier.cargarTodasVisitas();
       case Rol.admin:
       case Rol.superadmin:
-        notifier.cargarTodasVisitas();
+        visitaNotifier.cargarTodasVisitas();
+        cuotaNotifier.cargarCuotas();
     }
   }
 
@@ -50,6 +57,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const InicioUsuarioScreen(),
           const MisVisitasScreen(),
           const CrearVisitaScreen(),
+          const MisCuotasScreen(),
           const PerfilScreen(),
         ],
       Rol.guardia => [
@@ -62,6 +70,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const DashboardAdminScreen(),
           const VisitasAdminScreen(filterToday: false),
           const GestionScreen(),
+          const CuotasAdminScreen(),
           const PerfilScreen(),
         ],
     };
@@ -73,6 +82,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Mis Visitas'),
           BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Nueva'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Cuotas'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       Rol.guardia => const [
@@ -85,6 +95,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Visitas'),
           BottomNavigationBarItem(icon: Icon(Icons.manage_accounts), label: 'Gestión'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Cuotas'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
     };

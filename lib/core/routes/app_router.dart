@@ -2,6 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/pagos/screens/crear_cuota_screen.dart';
+import '../../features/pagos/screens/detalle_cuota_screen.dart';
+import '../../features/pagos/screens/reportar_pago_screen.dart';
 import '../../features/usuarios/screens/crear_usuario_screen.dart';
 import '../../features/usuarios/screens/detalle_usuario_screen.dart';
 import '../../features/visitas/screens/detalle_visita_screen.dart';
@@ -55,6 +58,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
               return DetalleUsuarioScreen(usuarioId: id);
+            },
+          ),
+          GoRoute(
+            path: 'cuotas/nueva',
+            builder: (context, state) => const CrearCuotaScreen(),
+          ),
+          GoRoute(
+            path: 'cuotas/:id/detalle',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return DetalleCuotaScreen(cuotaId: id);
+            },
+          ),
+          GoRoute(
+            path: 'cuotas/:id/reportar',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return ReportarPagoScreen(cuotaUsuarioId: id);
             },
           ),
         ],
