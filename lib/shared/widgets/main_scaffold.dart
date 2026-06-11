@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/incidentes/providers/incidente_provider.dart';
+import '../../features/incidentes/screens/incidentes_screen.dart';
 import '../../features/pagos/providers/cuota_provider.dart';
 import '../../features/pagos/screens/cuotas_admin_screen.dart';
 import '../../features/pagos/screens/mis_cuotas_screen.dart';
@@ -39,11 +41,13 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     final visitaNotifier = ref.read(visitaProvider.notifier);
     final cuotaNotifier = ref.read(cuotaProvider.notifier);
     final paqueteNotifier = ref.read(paqueteProvider.notifier);
+    final incidenteNotifier = ref.read(incidenteProvider.notifier);
     switch (user.rol) {
       case Rol.usuario:
         visitaNotifier.cargarMisVisitas();
         cuotaNotifier.cargarMisCuotas();
         paqueteNotifier.cargarMisPaquetes();
+        incidenteNotifier.cargarMisIncidentes();
       case Rol.guardia:
         visitaNotifier.cargarTodasVisitas();
         paqueteNotifier.cargarPaquetes();
@@ -52,6 +56,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         visitaNotifier.cargarTodasVisitas();
         cuotaNotifier.cargarCuotas();
         paqueteNotifier.cargarPaquetes();
+        incidenteNotifier.cargarIncidentes();
     }
   }
 
@@ -62,6 +67,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const MisVisitasScreen(),
           const CrearVisitaScreen(),
           const PaquetesScreen(),
+          const IncidentesScreen(),
           const MisCuotasScreen(),
           const PerfilScreen(),
         ],
@@ -76,6 +82,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const DashboardAdminScreen(),
           const VisitasAdminScreen(filterToday: false),
           const PaquetesScreen(),
+          const IncidentesScreen(),
           const GestionScreen(),
           const CuotasAdminScreen(),
           const PerfilScreen(),
@@ -87,26 +94,45 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     return switch (rol) {
       Rol.usuario => const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Mis Visitas'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Nueva'),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Cuotas'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt), label: 'Mis Visitas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle_outline), label: 'Nueva'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.report_outlined), label: 'Incidentes'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long), label: 'Cuotas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       Rol.guardia => const [
-          BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), label: 'Escanear'),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.qr_code_scanner), label: 'Escanear'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
           BottomNavigationBarItem(icon: Icon(Icons.today), label: 'Hoy'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Historial'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.history), label: 'Historial'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       Rol.admin || Rol.superadmin => const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Visitas'),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
-          BottomNavigationBarItem(icon: Icon(Icons.manage_accounts), label: 'Gestión'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Cuotas'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt), label: 'Visitas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.report_outlined), label: 'Incidentes'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.manage_accounts), label: 'Gestión'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long), label: 'Cuotas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
     };
   }

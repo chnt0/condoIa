@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/incidentes/screens/crear_incidente_screen.dart';
+import '../../features/incidentes/screens/detalle_incidente_screen.dart';
 import '../../features/pagos/screens/crear_cuota_screen.dart';
 import '../../features/pagos/screens/detalle_cuota_screen.dart';
 import '../../features/pagos/screens/reportar_pago_screen.dart';
@@ -20,25 +22,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoading = authState.isLoading;
       final isAuthenticated = authState.isAuthenticated;
-
       final isSplash = state.matchedLocation == '/splash';
       final isLogin = state.matchedLocation == '/login';
-
       if (isLoading) return isSplash ? null : '/splash';
       if (!isAuthenticated) return isLogin ? null : '/login';
       if (isSplash || isLogin) return '/home';
-
       return null;
     },
     routes: [
       GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
+          path: '/splash',
+          builder: (context, state) => const SplashScreen()),
       GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
+          path: '/login',
+          builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/home',
         builder: (context, state) => const MainScaffold(),
@@ -82,6 +79,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'paquetes/nuevo',
             builder: (context, state) => const RegistrarPaqueteScreen(),
+          ),
+          GoRoute(
+            path: 'incidentes/nuevo',
+            builder: (context, state) => const CrearIncidenteScreen(),
+          ),
+          GoRoute(
+            path: 'incidentes/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return DetalleIncidenteScreen(incidenteId: id);
+            },
           ),
         ],
       ),
