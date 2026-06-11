@@ -5,6 +5,7 @@ import '../../features/auth/screens/splash_screen.dart';
 import '../../features/pagos/screens/crear_cuota_screen.dart';
 import '../../features/pagos/screens/detalle_cuota_screen.dart';
 import '../../features/pagos/screens/reportar_pago_screen.dart';
+import '../../features/paquetes/screens/registrar_paquete_screen.dart';
 import '../../features/usuarios/screens/crear_usuario_screen.dart';
 import '../../features/usuarios/screens/detalle_usuario_screen.dart';
 import '../../features/visitas/screens/detalle_visita_screen.dart';
@@ -77,6 +78,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               final id = int.parse(state.pathParameters['id']!);
               return ReportarPagoScreen(cuotaUsuarioId: id);
             },
+          ),
+          GoRoute(
+            path: 'paquetes/nuevo',
+            builder: (context, state) => const RegistrarPaqueteScreen(),
           ),
         ],
       ),
