@@ -168,6 +168,36 @@ class ApiClient {
     }
   }
 
+  Future<void> delete(String endpoint, {Map<String, String>? headers}) async {
+    try {
+      final url = Uri.parse('$baseUrl$endpoint');
+      final response = await http
+          .delete(url, headers: _getHeaders(additionalHeaders: headers))
+          .timeout(timeout);
+      if (response.statusCode >= 200 && response.statusCode < 300) return;
+      ApiError? apiError;
+      try {
+        if (response.body.isNotEmpty) {
+          apiError = ApiError.fromJson(
+              jsonDecode(response.body) as Map<String, dynamic>);
+        }
+      } catch (_) {}
+      throw ApiException(
+        apiError?.message ?? _getDefaultErrorMessage(response.statusCode),
+        statusCode: response.statusCode,
+        apiError: apiError,
+      );
+    } on TimeoutException {
+      throw ApiException(
+        'La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.',
+        statusCode: 408,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Error de conexión. Verifique su internet e intente nuevamente.');
+    }
+  }
+
   Map<String, dynamic> _handleResponse(http.Response response) {
     final statusCode = response.statusCode;
 
