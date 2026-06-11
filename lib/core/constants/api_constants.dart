@@ -19,6 +19,10 @@ class ApiConstants {
   static String usuarioById(int id) => '$apiPrefix/usuarios/$id';
   static String usuarioEstado(int id) => '$apiPrefix/usuarios/$id/estado';
 
+  // Notificaciones
+  static const String notificaciones = '$apiPrefix/notificaciones';
+  static String notificacionById(int id) => '$apiPrefix/notificaciones/$id';
+
   // Incidentes
   static const String incidentes = '$apiPrefix/incidentes';
   static const String misIncidentes = '$apiPrefix/incidentes/mis-incidentes';
