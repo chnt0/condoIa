@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/incidentes/providers/incidente_provider.dart';
 import '../../features/incidentes/screens/incidentes_screen.dart';
+import '../../features/notificaciones/providers/notificacion_provider.dart';
+import '../../features/notificaciones/screens/notificaciones_screen.dart';
 import '../../features/pagos/providers/cuota_provider.dart';
 import '../../features/pagos/screens/cuotas_admin_screen.dart';
 import '../../features/pagos/screens/mis_cuotas_screen.dart';
@@ -42,21 +44,25 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     final cuotaNotifier = ref.read(cuotaProvider.notifier);
     final paqueteNotifier = ref.read(paqueteProvider.notifier);
     final incidenteNotifier = ref.read(incidenteProvider.notifier);
+    final notificacionNotifier = ref.read(notificacionProvider.notifier);
     switch (user.rol) {
       case Rol.usuario:
         visitaNotifier.cargarMisVisitas();
         cuotaNotifier.cargarMisCuotas();
         paqueteNotifier.cargarMisPaquetes();
         incidenteNotifier.cargarMisIncidentes();
+        notificacionNotifier.cargarNotificaciones();
       case Rol.guardia:
         visitaNotifier.cargarTodasVisitas();
         paqueteNotifier.cargarPaquetes();
+        notificacionNotifier.cargarNotificaciones();
       case Rol.admin:
       case Rol.superadmin:
         visitaNotifier.cargarTodasVisitas();
         cuotaNotifier.cargarCuotas();
         paqueteNotifier.cargarPaquetes();
         incidenteNotifier.cargarIncidentes();
+        notificacionNotifier.cargarNotificaciones();
     }
   }
 
@@ -69,6 +75,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const PaquetesScreen(),
           const IncidentesScreen(),
           const MisCuotasScreen(),
+          const NotificacionesScreen(),
           const PerfilScreen(),
         ],
       Rol.guardia => [
@@ -76,6 +83,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const PaquetesScreen(),
           const VisitasAdminScreen(filterToday: true),
           const VisitasAdminScreen(filterToday: false),
+          const NotificacionesScreen(),
           const PerfilScreen(),
         ],
       Rol.admin || Rol.superadmin => [
@@ -85,6 +93,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const IncidentesScreen(),
           const GestionScreen(),
           const CuotasAdminScreen(),
+          const NotificacionesScreen(),
           const PerfilScreen(),
         ],
     };
@@ -94,8 +103,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     return switch (rol) {
       Rol.usuario => const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt), label: 'Mis Visitas'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Visitas'),
           BottomNavigationBarItem(
               icon: Icon(Icons.add_circle_outline), label: 'Nueva'),
           BottomNavigationBarItem(
@@ -104,6 +112,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
               icon: Icon(Icons.report_outlined), label: 'Incidentes'),
           BottomNavigationBarItem(
               icon: Icon(Icons.receipt_long), label: 'Cuotas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
@@ -116,13 +126,14 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           BottomNavigationBarItem(
               icon: Icon(Icons.history), label: 'Historial'),
           BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
+          BottomNavigationBarItem(
               icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       Rol.admin || Rol.superadmin => const [
           BottomNavigationBarItem(
               icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt), label: 'Visitas'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Visitas'),
           BottomNavigationBarItem(
               icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
           BottomNavigationBarItem(
@@ -131,6 +142,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
               icon: Icon(Icons.manage_accounts), label: 'Gestión'),
           BottomNavigationBarItem(
               icon: Icon(Icons.receipt_long), label: 'Cuotas'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],

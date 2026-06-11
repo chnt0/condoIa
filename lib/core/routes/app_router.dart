@@ -4,6 +4,8 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/incidentes/screens/crear_incidente_screen.dart';
 import '../../features/incidentes/screens/detalle_incidente_screen.dart';
+import '../../features/notificaciones/screens/crear_notificacion_screen.dart';
+import '../../features/notificaciones/screens/detalle_notificacion_screen.dart';
 import '../../features/pagos/screens/crear_cuota_screen.dart';
 import '../../features/pagos/screens/detalle_cuota_screen.dart';
 import '../../features/pagos/screens/reportar_pago_screen.dart';
@@ -89,6 +91,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
               return DetalleIncidenteScreen(incidenteId: id);
+            },
+          ),
+          GoRoute(
+            path: 'notificaciones/nueva',
+            builder: (context, state) => const CrearNotificacionScreen(),
+          ),
+          GoRoute(
+            path: 'notificaciones/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return DetalleNotificacionScreen(notificacionId: id);
             },
           ),
         ],
