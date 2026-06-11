@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/areas/providers/area_comun_provider.dart';
+import '../../features/areas/screens/crear_editar_area_screen.dart';
+import '../../features/areas/screens/disponibilidad_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/incidentes/screens/crear_incidente_screen.dart';
@@ -32,77 +35,82 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(
-          path: '/splash',
-          builder: (context, state) => const SplashScreen()),
-      GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginScreen()),
+      GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
+      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const MainScaffold(),
+        builder: (_, __) => const MainScaffold(),
         routes: [
           GoRoute(
             path: 'visitas/:id',
-            builder: (context, state) {
-              final id = int.parse(state.pathParameters['id']!);
-              return DetalleVisitaScreen(visitaId: id);
-            },
+            builder: (context, state) => DetalleVisitaScreen(
+                visitaId: int.parse(state.pathParameters['id']!)),
           ),
           GoRoute(
             path: 'usuarios/nuevo',
-            builder: (context, state) => const CrearUsuarioScreen(),
+            builder: (_, __) => const CrearUsuarioScreen(),
           ),
           GoRoute(
             path: 'usuarios/:id',
-            builder: (context, state) {
-              final id = int.parse(state.pathParameters['id']!);
-              return DetalleUsuarioScreen(usuarioId: id);
-            },
+            builder: (context, state) => DetalleUsuarioScreen(
+                usuarioId: int.parse(state.pathParameters['id']!)),
           ),
           GoRoute(
             path: 'cuotas/nueva',
-            builder: (context, state) => const CrearCuotaScreen(),
+            builder: (_, __) => const CrearCuotaScreen(),
           ),
           GoRoute(
             path: 'cuotas/:id/detalle',
-            builder: (context, state) {
-              final id = int.parse(state.pathParameters['id']!);
-              return DetalleCuotaScreen(cuotaId: id);
-            },
+            builder: (context, state) => DetalleCuotaScreen(
+                cuotaId: int.parse(state.pathParameters['id']!)),
           ),
           GoRoute(
             path: 'cuotas/:id/reportar',
-            builder: (context, state) {
-              final id = int.parse(state.pathParameters['id']!);
-              return ReportarPagoScreen(cuotaUsuarioId: id);
-            },
+            builder: (context, state) => ReportarPagoScreen(
+                cuotaUsuarioId: int.parse(state.pathParameters['id']!)),
           ),
           GoRoute(
             path: 'paquetes/nuevo',
-            builder: (context, state) => const RegistrarPaqueteScreen(),
+            builder: (_, __) => const RegistrarPaqueteScreen(),
           ),
           GoRoute(
             path: 'incidentes/nuevo',
-            builder: (context, state) => const CrearIncidenteScreen(),
+            builder: (_, __) => const CrearIncidenteScreen(),
           ),
           GoRoute(
             path: 'incidentes/:id',
-            builder: (context, state) {
-              final id = int.parse(state.pathParameters['id']!);
-              return DetalleIncidenteScreen(incidenteId: id);
-            },
+            builder: (context, state) => DetalleIncidenteScreen(
+                incidenteId: int.parse(state.pathParameters['id']!)),
           ),
           GoRoute(
             path: 'notificaciones/nueva',
-            builder: (context, state) => const CrearNotificacionScreen(),
+            builder: (_, __) => const CrearNotificacionScreen(),
           ),
           GoRoute(
             path: 'notificaciones/:id',
+            builder: (context, state) => DetalleNotificacionScreen(
+                notificacionId: int.parse(state.pathParameters['id']!)),
+          ),
+          GoRoute(
+            path: 'areas/nueva',
+            builder: (_, __) => const CrearEditarAreaScreen(),
+          ),
+          GoRoute(
+            path: 'areas/:id/editar',
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
-              return DetalleNotificacionScreen(notificacionId: id);
+              final area = ref
+                  .read(areaComunProvider)
+                  .areas
+                  .where((a) => a.id == id)
+                  .firstOrNull;
+              return CrearEditarAreaScreen(area: area);
             },
+          ),
+          GoRoute(
+            path: 'areas/:id/disponibilidad',
+            builder: (context, state) => DisponibilidadScreen(
+                areaComunId: int.parse(state.pathParameters['id']!)),
           ),
         ],
       ),

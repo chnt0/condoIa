@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/areas/providers/area_comun_provider.dart';
+import '../../features/areas/providers/reservacion_provider.dart';
+import '../../features/areas/screens/areas_screen.dart';
 import '../../features/incidentes/providers/incidente_provider.dart';
 import '../../features/incidentes/screens/incidentes_screen.dart';
 import '../../features/notificaciones/providers/notificacion_provider.dart';
@@ -45,6 +48,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
     final paqueteNotifier = ref.read(paqueteProvider.notifier);
     final incidenteNotifier = ref.read(incidenteProvider.notifier);
     final notificacionNotifier = ref.read(notificacionProvider.notifier);
+    final areaNotifier = ref.read(areaComunProvider.notifier);
     switch (user.rol) {
       case Rol.usuario:
         visitaNotifier.cargarMisVisitas();
@@ -52,6 +56,8 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         paqueteNotifier.cargarMisPaquetes();
         incidenteNotifier.cargarMisIncidentes();
         notificacionNotifier.cargarNotificaciones();
+        areaNotifier.cargarAreas();
+        ref.read(reservacionProvider.notifier).cargarMisReservaciones();
       case Rol.guardia:
         visitaNotifier.cargarTodasVisitas();
         paqueteNotifier.cargarPaquetes();
@@ -63,6 +69,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         paqueteNotifier.cargarPaquetes();
         incidenteNotifier.cargarIncidentes();
         notificacionNotifier.cargarNotificaciones();
+        areaNotifier.cargarAreas();
     }
   }
 
@@ -75,6 +82,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const PaquetesScreen(),
           const IncidentesScreen(),
           const MisCuotasScreen(),
+          const AreasScreen(),
           const NotificacionesScreen(),
           const PerfilScreen(),
         ],
@@ -93,6 +101,7 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           const IncidentesScreen(),
           const GestionScreen(),
           const CuotasAdminScreen(),
+          const AreasScreen(),
           const NotificacionesScreen(),
           const PerfilScreen(),
         ],
@@ -104,48 +113,32 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
       Rol.usuario => const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Visitas'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline), label: 'Nueva'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.report_outlined), label: 'Incidentes'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long), label: 'Cuotas'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Nueva'),
+          BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
+          BottomNavigationBarItem(icon: Icon(Icons.report_outlined), label: 'Incidentes'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Cuotas'),
+          BottomNavigationBarItem(icon: Icon(Icons.meeting_room_outlined), label: 'Áreas'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       Rol.guardia => const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.qr_code_scanner), label: 'Escanear'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
+          BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), label: 'Escanear'),
+          BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
           BottomNavigationBarItem(icon: Icon(Icons.today), label: 'Hoy'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.history), label: 'Historial'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Historial'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       Rol.admin || Rol.superadmin => const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Visitas'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.report_outlined), label: 'Incidentes'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.manage_accounts), label: 'Gestión'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long), label: 'Cuotas'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), label: 'Paquetes'),
+          BottomNavigationBarItem(icon: Icon(Icons.report_outlined), label: 'Incidentes'),
+          BottomNavigationBarItem(icon: Icon(Icons.manage_accounts), label: 'Gestión'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Cuotas'),
+          BottomNavigationBarItem(icon: Icon(Icons.meeting_room_outlined), label: 'Áreas'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications_outlined), label: 'Avisos'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
     };
   }
@@ -154,15 +147,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     if (user == null) return const SizedBox.shrink();
-
     final screens = _buildScreens(user.rol);
     final items = _buildItems(user.rol);
-
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
