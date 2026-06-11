@@ -7,6 +7,7 @@ import com.condos.common.utils.TenantContext;
 import com.condos.condominio.model.Condominio;
 import com.condos.condominio.repository.CondominioRepository;
 import com.condos.usuario.dto.CreateUsuarioRequest;
+import com.condos.usuario.dto.ResidenteBasicoResponse;
 import com.condos.usuario.dto.UpdateUsuarioRequest;
 import com.condos.usuario.dto.UsuarioResponse;
 import com.condos.usuario.model.Rol;
@@ -129,6 +130,19 @@ public class UsuarioService {
         usuario = usuarioRepository.save(usuario);
         log.info("Estado de usuario cambiado: id={}, activo={}", id, usuario.getActivo());
         return toResponse(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ResidenteBasicoResponse> listarResidentes() {
+        Long condominioId = TenantContext.getCondominioId();
+        return usuarioRepository.findByCondominioIdAndRolAndActivo(condominioId, Rol.USUARIO, true)
+                .stream()
+                .map(u -> ResidenteBasicoResponse.builder()
+                        .id(u.getId())
+                        .nombreCompleto(u.getNombreCompleto())
+                        .unidadHabitacional(u.getUnidadHabitacional())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private Usuario findAndValidate(Long id) {

@@ -1,6 +1,7 @@
 package com.condos.usuario.controller;
 
 import com.condos.usuario.dto.CreateUsuarioRequest;
+import com.condos.usuario.dto.ResidenteBasicoResponse;
 import com.condos.usuario.dto.UpdateUsuarioRequest;
 import com.condos.usuario.dto.UsuarioResponse;
 import com.condos.usuario.service.UsuarioService;
@@ -52,5 +53,11 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     public ResponseEntity<UsuarioResponse> toggleEstado(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.toggleEstado(id));
+    }
+
+    @GetMapping("/residentes")
+    @PreAuthorize("hasAnyRole('GUARDIA', 'ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<List<ResidenteBasicoResponse>> listarResidentes() {
+        return ResponseEntity.ok(usuarioService.listarResidentes());
     }
 }
