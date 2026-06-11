@@ -19,6 +19,17 @@ class ApiConstants {
   static String usuarioById(int id) => '$apiPrefix/usuarios/$id';
   static String usuarioEstado(int id) => '$apiPrefix/usuarios/$id/estado';
 
+  // Áreas Comunes
+  static const String areasComunes = '$apiPrefix/areas-comunes';
+  static String areaComunById(int id) => '$apiPrefix/areas-comunes/$id';
+  static String toggleAreaComun(int id) => '$apiPrefix/areas-comunes/$id/toggle';
+  static String disponibilidad(int id) => '$apiPrefix/areas-comunes/$id/disponibilidad';
+
+  // Reservaciones
+  static const String reservaciones = '$apiPrefix/reservaciones';
+  static const String misReservaciones = '$apiPrefix/reservaciones/mis-reservaciones';
+  static String cancelarReservacion(int id) => '$apiPrefix/reservaciones/$id';
+
   // Notificaciones
   static const String notificaciones = '$apiPrefix/notificaciones';
   static String notificacionById(int id) => '$apiPrefix/notificaciones/$id';
