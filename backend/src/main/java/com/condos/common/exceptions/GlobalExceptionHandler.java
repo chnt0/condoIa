@@ -1,6 +1,8 @@
 package com.condos.common.exceptions;
 
 import com.condos.common.dto.ErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handle UnauthorizedException - returns 401 Unauthorized
@@ -88,13 +92,40 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handle all other exceptions - returns 500 Internal Server Error
+     * Handle IllegalArgumentException - returns 400 Bad Request
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponse error = new ErrorResponse(
+                "Bad Request",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle IllegalStateException - returns 409 Conflict
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        ErrorResponse error = new ErrorResponse(
+                "Conflict",
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value()
+        );
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handle all other exceptions - logs internally, returns generic 500 to client
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        log.error("Unhandled exception: {}", ex.getMessage(), ex);
         ErrorResponse error = new ErrorResponse(
                 "Internal Server Error",
-                "An unexpected error occurred: " + ex.getMessage(),
+                "Ocurrió un error interno. Contacta al administrador.",
                 HttpStatus.INTERNAL_SERVER_ERROR.value()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

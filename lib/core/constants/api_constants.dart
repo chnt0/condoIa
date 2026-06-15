@@ -1,5 +1,8 @@
 class ApiConstants {
-  static const String baseUrl = 'http://localhost:8080';
+  // En desarrollo: flutter run (usa localhost por defecto)
+  // En producción: flutter build apk --dart-define=BASE_URL=https://api.tu-dominio.com
+  static const String baseUrl =
+      String.fromEnvironment('BASE_URL', defaultValue: 'http://localhost:8080');
   static const String apiPrefix = '/api';
 
   static const String login = '$apiPrefix/auth/login';

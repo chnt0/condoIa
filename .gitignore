@@ -53,3 +53,8 @@ backend/mvnw.cmd
 *.jar
 !backend/.mvn/wrapper/maven-wrapper.jar
 .superpowers/
+
+# Environment files — NUNCA subir al repositorio
+.env
+backend/.env
+*.env.local

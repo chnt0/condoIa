@@ -1,6 +1,7 @@
 package com.condos.config;
 
 import com.condos.auth.filter.JwtAuthenticationFilter;
+import com.condos.auth.filter.LoginRateLimitFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final LoginRateLimitFilter loginRateLimitFilter;
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
@@ -52,7 +54,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // Add JWT filter before UsernamePasswordAuthenticationFilter
+                // Rate limit filter runs first (before JWT)
+                .addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                // JWT filter runs after rate limit
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
