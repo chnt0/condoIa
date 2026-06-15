@@ -1,0 +1,25 @@
+# Caddyfile — proxy HTTPS para condos API
+# Sustituir tu-dominio.com por tu dominio real
+# Caddy obtiene el certificado TLS automáticamente con Let's Encrypt
+
+api.tu-dominio.com {
+    # Proxy al backend Spring Boot
+    reverse_proxy localhost:8080
+
+    # Headers de seguridad
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # Logs de acceso
+    log {
+        output file /var/log/caddy/condos-access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+    }
+}

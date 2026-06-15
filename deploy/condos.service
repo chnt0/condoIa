@@ -1,0 +1,41 @@
+[Unit]
+Description=Condos API — Spring Boot
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=condos
+Group=condos
+WorkingDirectory=/opt/condos
+
+# ── Variables de entorno — EDITAR estos valores ──────────────
+Environment="SPRING_PROFILES_ACTIVE=prod"
+Environment="SERVER_PORT=8080"
+Environment="DB_URL=jdbc:postgresql://localhost:5432/condos_db"
+Environment="DB_USERNAME=condos_user"
+Environment="DB_PASSWORD=CAMBIAR_ESTO"
+Environment="JWT_SECRET=CAMBIAR_ESTO_min_32_chars_aleatorio"
+Environment="JWT_ACCESS_EXPIRATION=3600000"
+Environment="CORS_ORIGINS=https://TU_DOMINIO"
+# ─────────────────────────────────────────────────────────────
+
+ExecStart=/usr/bin/java \
+  -Xms256m \
+  -Xmx512m \
+  -jar /opt/condos/condos.jar
+
+# Reiniciar automáticamente si crashea
+Restart=on-failure
+RestartSec=10
+
+# Seguridad extra
+NoNewPrivileges=true
+PrivateTmp=true
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=condos
+
+[Install]
+WantedBy=multi-user.target
