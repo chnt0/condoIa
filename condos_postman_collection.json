@@ -1,0 +1,843 @@
+{
+  "info": {
+    "name": "Condos API",
+    "description": "Sistema de Administración de Condominios — todos los endpoints del backend Spring Boot.\n\n## Uso\n1. Ejecutar primero **Auth / Login Admin** para obtener el token\n2. El token se guarda automáticamente en la variable `adminToken`\n3. Hacer lo mismo con **Login Residente** y **Login Guardia**\n\n## Variables de colección\n- `baseUrl` = http://localhost:8080\n- `adminToken` — se llena automáticamente al hacer login\n- `userToken` — se llena automáticamente al hacer login\n- `guardiaToken` — se llena automáticamente al hacer login",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "userToken", "value": "", "type": "string" },
+    { "key": "guardiaToken", "value": "", "type": "string" },
+    { "key": "visitaId", "value": "1", "type": "string" },
+    { "key": "usuarioId", "value": "3", "type": "string" },
+    { "key": "cuotaId", "value": "1", "type": "string" },
+    { "key": "cuotaUsuarioId", "value": "1", "type": "string" },
+    { "key": "paqueteId", "value": "1", "type": "string" },
+    { "key": "incidenteId", "value": "1", "type": "string" },
+    { "key": "notificacionId", "value": "1", "type": "string" },
+    { "key": "areaComunId", "value": "1", "type": "string" },
+    { "key": "reservacionId", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('adminToken', json.token);",
+                  "  console.log('adminToken guardado');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login Residente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('userToken', json.token);",
+                  "  console.log('userToken guardado');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"residente1\",\n  \"password\": \"pass123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login Guardia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('guardiaToken', json.token);",
+                  "  console.log('guardiaToken guardado');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"guardia1\",\n  \"password\": \"pass123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Me (usuario autenticado)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Usuarios",
+      "item": [
+        {
+          "name": "Listar todos (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios", "host": ["{{baseUrl}}"], "path": ["api", "usuarios"] }
+          }
+        },
+        {
+          "name": "Crear usuario (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('usuarioId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"residente2\",\n  \"email\": \"res2@test.com\",\n  \"password\": \"pass123\",\n  \"nombreCompleto\": \"Pedro López\",\n  \"telefono\": \"5551234567\",\n  \"rol\": \"USUARIO\",\n  \"unidadHabitacional\": \"Torre B-202\",\n  \"esPropietario\": false\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/usuarios", "host": ["{{baseUrl}}"], "path": ["api", "usuarios"] }
+          }
+        },
+        {
+          "name": "Obtener por ID (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "{{usuarioId}}"] }
+          }
+        },
+        {
+          "name": "Actualizar usuario (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCompleto\": \"Pedro López Actualizado\",\n  \"telefono\": \"5559999999\",\n  \"rol\": \"USUARIO\",\n  \"unidadHabitacional\": \"Torre B-202\",\n  \"esPropietario\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "{{usuarioId}}"] }
+          }
+        },
+        {
+          "name": "Toggle estado activo (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}/estado", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "{{usuarioId}}", "estado"] }
+          }
+        },
+        {
+          "name": "Listar residentes (GUARDIA/ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/residentes", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "residentes"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🚗 Visitas",
+      "item": [
+        {
+          "name": "Listar todas (GUARDIA/ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/visitas", "host": ["{{baseUrl}}"], "path": ["api", "visitas"] }
+          }
+        },
+        {
+          "name": "Mis visitas (USUARIO)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/visitas/mis-visitas", "host": ["{{baseUrl}}"], "path": ["api", "visitas", "mis-visitas"] }
+          }
+        },
+        {
+          "name": "Crear visita (USUARIO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('visitaId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreVisitante\": \"Juan Pérez\",\n  \"telefonoVisitante\": \"5551234567\",\n  \"fechaHoraProgramada\": \"2026-07-01T15:00:00\",\n  \"motivo\": \"Visita familiar\",\n  \"vehiculoPlacas\": \"ABC-123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/visitas", "host": ["{{baseUrl}}"], "path": ["api", "visitas"] }
+          }
+        },
+        {
+          "name": "Obtener detalle visita",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/visitas/{{visitaId}}", "host": ["{{baseUrl}}"], "path": ["api", "visitas", "{{visitaId}}"] }
+          }
+        },
+        {
+          "name": "Obtener imagen QR",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/visitas/{{visitaId}}/qr-image", "host": ["{{baseUrl}}"], "path": ["api", "visitas", "{{visitaId}}", "qr-image"] }
+          }
+        },
+        {
+          "name": "Validar QR (GUARDIA)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{guardiaToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigoQr\": \"PONER_EL_HASH_QR_AQUI\",\n  \"notas\": \"Visita registrada correctamente\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/visitas/validar-qr", "host": ["{{baseUrl}}"], "path": ["api", "visitas", "validar-qr"] }
+          }
+        },
+        {
+          "name": "Cancelar visita (USUARIO)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/visitas/{{visitaId}}/cancelar", "host": ["{{baseUrl}}"], "path": ["api", "visitas", "{{visitaId}}", "cancelar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Cuotas y Pagos",
+      "item": [
+        {
+          "name": "Listar cuotas (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/cuotas", "host": ["{{baseUrl}}"], "path": ["api", "cuotas"] }
+          }
+        },
+        {
+          "name": "Crear cuota MENSUAL (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('cuotaId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"MENSUAL\",\n  \"concepto\": \"Mantenimiento Julio 2026\",\n  \"monto\": 850.00,\n  \"mes\": \"2026-07\",\n  \"fechaVencimiento\": \"2026-07-31\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuotas", "host": ["{{baseUrl}}"], "path": ["api", "cuotas"] }
+          }
+        },
+        {
+          "name": "Crear cuota EXTRAORDINARIA (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"EXTRAORDINARIA\",\n  \"concepto\": \"Reparación de elevador\",\n  \"monto\": 500.00,\n  \"fechaVencimiento\": \"2026-07-15\",\n  \"usuarioIds\": [3]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuotas", "host": ["{{baseUrl}}"], "path": ["api", "cuotas"] }
+          }
+        },
+        {
+          "name": "Mis cuotas (USUARIO)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/cuotas/mis-cuotas", "host": ["{{baseUrl}}"], "path": ["api", "cuotas", "mis-cuotas"] }
+          }
+        },
+        {
+          "name": "Detalle de cuota por residente (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/cuotas/{{cuotaId}}/detalle", "host": ["{{baseUrl}}"], "path": ["api", "cuotas", "{{cuotaId}}", "detalle"] }
+          }
+        },
+        {
+          "name": "Reportar pago (USUARIO)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referenciaPago\": \"TRF-20260701-001\",\n  \"notasUsuario\": \"Transferencia bancaria BBVA\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuotas/{{cuotaUsuarioId}}/reportar", "host": ["{{baseUrl}}"], "path": ["api", "cuotas", "{{cuotaUsuarioId}}", "reportar"] }
+          }
+        },
+        {
+          "name": "Confirmar pago (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"confirmado\": true,\n  \"notasAdmin\": \"Comprobante verificado\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuotas/{{cuotaUsuarioId}}/confirmar", "host": ["{{baseUrl}}"], "path": ["api", "cuotas", "{{cuotaUsuarioId}}", "confirmar"] }
+          }
+        },
+        {
+          "name": "Rechazar pago (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"confirmado\": false,\n  \"notasAdmin\": \"La referencia no corresponde al monto indicado\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuotas/{{cuotaUsuarioId}}/confirmar", "host": ["{{baseUrl}}"], "path": ["api", "cuotas", "{{cuotaUsuarioId}}", "confirmar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Paquetes",
+      "item": [
+        {
+          "name": "Listar todos (GUARDIA/ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/paquetes", "host": ["{{baseUrl}}"], "path": ["api", "paquetes"] }
+          }
+        },
+        {
+          "name": "Mis paquetes (USUARIO)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/paquetes/mis-paquetes", "host": ["{{baseUrl}}"], "path": ["api", "paquetes", "mis-paquetes"] }
+          }
+        },
+        {
+          "name": "Registrar paquete (GUARDIA)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('paqueteId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{guardiaToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioDestinatarioId\": 3,\n  \"descripcion\": \"Caja grande - Amazon\",\n  \"notas\": \"Requiere firma\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/paquetes", "host": ["{{baseUrl}}"], "path": ["api", "paquetes"] }
+          }
+        },
+        {
+          "name": "Marcar como entregado (GUARDIA)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{guardiaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/paquetes/{{paqueteId}}/entregar", "host": ["{{baseUrl}}"], "path": ["api", "paquetes", "{{paqueteId}}", "entregar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🚨 Incidentes",
+      "item": [
+        {
+          "name": "Listar todos (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/incidentes", "host": ["{{baseUrl}}"], "path": ["api", "incidentes"] }
+          }
+        },
+        {
+          "name": "Mis incidentes (USUARIO)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/incidentes/mis-incidentes", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "mis-incidentes"] }
+          }
+        },
+        {
+          "name": "Crear incidente (USUARIO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('incidenteId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoria\": \"MANTENIMIENTO\",\n  \"titulo\": \"Fuga de agua en pasillo\",\n  \"descripcion\": \"Hay una fuga de agua en el pasillo del 3er piso, Torre A, junto al elevador.\",\n  \"ubicacion\": \"Torre A - Piso 3 - Pasillo principal\",\n  \"prioridad\": \"ALTA\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/incidentes", "host": ["{{baseUrl}}"], "path": ["api", "incidentes"] }
+          }
+        },
+        {
+          "name": "Actualizar estado EN_PROCESO (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EN_PROCESO\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/incidentes/{{incidenteId}}/estado", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "{{incidenteId}}", "estado"] }
+          }
+        },
+        {
+          "name": "Actualizar estado RESUELTO (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"RESUELTO\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/incidentes/{{incidenteId}}/estado", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "{{incidenteId}}", "estado"] }
+          }
+        },
+        {
+          "name": "Cancelar incidente (USUARIO)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/incidentes/{{incidenteId}}", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "{{incidenteId}}"] }
+          }
+        },
+        {
+          "name": "Listar comentarios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/incidentes/{{incidenteId}}/comentarios", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "{{incidenteId}}", "comentarios"] }
+          }
+        },
+        {
+          "name": "Agregar comentario (USUARIO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Sigue sin resolverse, por favor priorizar\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/incidentes/{{incidenteId}}/comentarios", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "{{incidenteId}}", "comentarios"] }
+          }
+        },
+        {
+          "name": "Agregar comentario (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"El plomero ya fue agendado para mañana a las 10am\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/incidentes/{{incidenteId}}/comentarios", "host": ["{{baseUrl}}"], "path": ["api", "incidentes", "{{incidenteId}}", "comentarios"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📢 Notificaciones",
+      "item": [
+        {
+          "name": "Listar (todos los roles)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notificaciones", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones"] }
+          }
+        },
+        {
+          "name": "Crear — segmento TODOS (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('notificacionId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Aviso de mantenimiento general\",\n  \"mensaje\": \"Se realizará mantenimiento preventivo de instalaciones el próximo sábado de 8am a 2pm. Puede haber cortes breves de agua y luz.\",\n  \"segmento\": \"TODOS\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/notificaciones", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones"] }
+          }
+        },
+        {
+          "name": "Crear — por edificio (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Aviso Torre A\",\n  \"mensaje\": \"Se pintarán los pasillos de Torre A esta semana. Disculpe las molestias.\",\n  \"segmento\": \"EDIFICIO_X\",\n  \"edificio\": \"Torre A\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/notificaciones", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones"] }
+          }
+        },
+        {
+          "name": "Eliminar notificación (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notificaciones/{{notificacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones", "{{notificacionId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏊 Áreas Comunes",
+      "item": [
+        {
+          "name": "Listar áreas (todos los roles)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/areas-comunes", "host": ["{{baseUrl}}"], "path": ["api", "areas-comunes"] }
+          }
+        },
+        {
+          "name": "Crear área (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('areaComunId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Salón de Eventos\",\n  \"descripcion\": \"Salón multiusos con capacidad para 50 personas\",\n  \"capacidad\": 50,\n  \"horarioInicio\": \"09:00\",\n  \"horarioFin\": \"22:00\",\n  \"duracionBloqueMinutos\": 120,\n  \"maxReservasMesPorUsuario\": 2,\n  \"anticipacionMinimaHoras\": 24,\n  \"anticipacionMaximaDias\": 30,\n  \"activa\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/areas-comunes", "host": ["{{baseUrl}}"], "path": ["api", "areas-comunes"] }
+          }
+        },
+        {
+          "name": "Editar área (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Salón de Eventos\",\n  \"descripcion\": \"Salón multiusos renovado - capacidad 60 personas\",\n  \"capacidad\": 60,\n  \"horarioInicio\": \"09:00\",\n  \"horarioFin\": \"23:00\",\n  \"duracionBloqueMinutos\": 120,\n  \"maxReservasMesPorUsuario\": 2,\n  \"anticipacionMinimaHoras\": 24,\n  \"anticipacionMaximaDias\": 30,\n  \"activa\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/areas-comunes/{{areaComunId}}", "host": ["{{baseUrl}}"], "path": ["api", "areas-comunes", "{{areaComunId}}"] }
+          }
+        },
+        {
+          "name": "Toggle activa/inactiva (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/areas-comunes/{{areaComunId}}/toggle", "host": ["{{baseUrl}}"], "path": ["api", "areas-comunes", "{{areaComunId}}", "toggle"] }
+          }
+        },
+        {
+          "name": "Disponibilidad por fecha",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/areas-comunes/{{areaComunId}}/disponibilidad?fecha=2026-07-05",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "areas-comunes", "{{areaComunId}}", "disponibilidad"],
+              "query": [{ "key": "fecha", "value": "2026-07-05" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📅 Reservaciones",
+      "item": [
+        {
+          "name": "Listar todas (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservaciones", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones"] }
+          }
+        },
+        {
+          "name": "Mis reservaciones (USUARIO)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservaciones/mis-reservaciones", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones", "mis-reservaciones"] }
+          }
+        },
+        {
+          "name": "Crear reservación (USUARIO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('reservacionId', json.id.toString());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"areaComunId\": 1,\n  \"fechaHoraInicio\": \"2026-07-05T10:00:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/reservaciones", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones"] }
+          }
+        },
+        {
+          "name": "Cancelar reservación (USUARIO)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservaciones/{{reservacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones", "{{reservacionId}}"] }
+          }
+        },
+        {
+          "name": "Cancelar reservación (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservaciones/{{reservacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones", "{{reservacionId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Flujos de prueba",
+      "item": [
+        {
+          "name": "Flujo: Residente moroso no puede reservar",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"areaComunId\": 1,\n  \"fechaHoraInicio\": \"2026-07-10T14:00:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/reservaciones", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones"] },
+            "description": "Si el residente tiene cuotas vencidas PENDIENTE, debe retornar 400 con mensaje de moroso"
+          }
+        },
+        {
+          "name": "Flujo: Bloque ya reservado (conflicto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"areaComunId\": 1,\n  \"fechaHoraInicio\": \"2026-06-20T10:00:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/reservaciones", "host": ["{{baseUrl}}"], "path": ["api", "reservaciones"] },
+            "description": "El bloque 10:00 del 2026-06-20 ya fue reservado en el smoke test. Debe retornar 400 conflicto."
+          }
+        },
+        {
+          "name": "Flujo: GUARDIA intenta crear cuota (debe fallar 403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{guardiaToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"MENSUAL\",\n  \"concepto\": \"Test\",\n  \"monto\": 100,\n  \"mes\": \"2026-07\",\n  \"fechaVencimiento\": \"2026-07-31\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cuotas", "host": ["{{baseUrl}}"], "path": ["api", "cuotas"] },
+            "description": "El GUARDIA no tiene permiso. Debe retornar 403 Forbidden."
+          }
+        },
+        {
+          "name": "Flujo: USUARIO intenta ver todos los usuarios (debe fallar 403)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios", "host": ["{{baseUrl}}"], "path": ["api", "usuarios"] },
+            "description": "Solo ADMIN puede listar todos los usuarios. Debe retornar 403."
+          }
+        },
+        {
+          "name": "Flujo: Sin token (debe fallar 401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/cuotas", "host": ["{{baseUrl}}"], "path": ["api", "cuotas"] },
+            "description": "Sin Authorization header. Debe retornar 401 Unauthorized."
+          }
+        }
+      ]
+    }
+  ]
+}
