@@ -1,3 +1,4 @@
+import '../../core/constants/api_constants.dart';
 import '../models/usuario.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
@@ -17,7 +18,7 @@ class AuthService {
     final request = LoginRequest(username: username, password: password);
 
     final response = await apiClient.post(
-      '/auth/login',
+      ApiConstants.login,
       request.toJson(),
     );
 
@@ -34,7 +35,7 @@ class AuthService {
   }
 
   Future<Usuario> getCurrentUser() async {
-    final response = await apiClient.get('/auth/me');
+    final response = await apiClient.get(ApiConstants.me);
     final usuario = Usuario.fromJson(response);
 
     // Update cached user
