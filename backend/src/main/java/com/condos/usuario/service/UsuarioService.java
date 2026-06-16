@@ -19,6 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.condos.usuario.dto.BulkUsuarioError;
+import com.condos.usuario.dto.BulkUsuarioResponse;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,6 +83,12 @@ public class UsuarioService {
             }
         }
 
+        if (request.getRol() == Rol.USUARIO) {
+            if (request.getUnidadHabitacional() == null || request.getUnidadHabitacional().isBlank()) {
+                throw new IllegalArgumentException("La unidad habitacional es requerida para residentes");
+            }
+        }
+
         Condominio condominio = condominioRepository.findById(condominioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Condominio no encontrado"));
 
@@ -109,6 +123,12 @@ public class UsuarioService {
         } else {
             if (request.getRol() == Rol.SUPERADMIN) {
                 throw new UnauthorizedException("No se puede asignar rol SUPERADMIN");
+            }
+        }
+
+        if (request.getRol() == Rol.USUARIO) {
+            if (request.getUnidadHabitacional() == null || request.getUnidadHabitacional().isBlank()) {
+                throw new IllegalArgumentException("La unidad habitacional es requerida para residentes");
             }
         }
 
@@ -157,6 +177,84 @@ public class UsuarioService {
             }
         }
         return usuario;
+    }
+
+    @Transactional
+    public BulkUsuarioResponse crearUsuariosBulk(MultipartFile file) {
+        Long condominioId = TenantContext.getCondominioId();
+        Condominio condominio = condominioRepository.findById(condominioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Condominio no encontrado"));
+
+        int creados = 0;
+        List<BulkUsuarioError> errores = new ArrayList<>();
+        int fila = 1;
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+
+            String linea;
+            boolean primeraLinea = true;
+
+            while ((linea = reader.readLine()) != null) {
+                if (primeraLinea) { primeraLinea = false; continue; }
+                fila++;
+                String[] col = linea.split(",", -1);
+                if (col.length < 3) {
+                    errores.add(new BulkUsuarioError(fila, "", "Formato inválido: faltan columnas"));
+                    continue;
+                }
+
+                String nombreCompleto = col[0].trim();
+                String email = col[1].trim();
+                String rol = col[2].trim().toUpperCase();
+                String unidad = col.length > 3 ? col[3].trim() : "";
+
+                if (nombreCompleto.isEmpty() || email.isEmpty() || rol.isEmpty()) {
+                    errores.add(new BulkUsuarioError(fila, email, "Campos obligatorios vacíos"));
+                    continue;
+                }
+                if (!rol.equals("USUARIO") && !rol.equals("GUARDIA")) {
+                    errores.add(new BulkUsuarioError(fila, email, "Rol inválido: " + rol));
+                    continue;
+                }
+                if (rol.equals("USUARIO") && unidad.isEmpty()) {
+                    errores.add(new BulkUsuarioError(fila, email, "Unidad habitacional requerida para USUARIO"));
+                    continue;
+                }
+                if (usuarioRepository.existsByEmail(email)) {
+                    errores.add(new BulkUsuarioError(fila, email, "El email ya está en uso"));
+                    continue;
+                }
+                if (usuarioRepository.existsByUsername(email)) {
+                    errores.add(new BulkUsuarioError(fila, email, "El username ya está en uso"));
+                    continue;
+                }
+
+                try {
+                    Rol rolEnum = Rol.valueOf(rol);
+                    Usuario usuario = Usuario.builder()
+                            .username(email)
+                            .email(email)
+                            .passwordHash(passwordEncoder.encode("Condos2024!"))
+                            .nombreCompleto(nombreCompleto)
+                            .rol(rolEnum)
+                            .condominio(condominio)
+                            .unidadHabitacional(unidad.isEmpty() ? null : unidad)
+                            .esPropietario(false)
+                            .activo(true)
+                            .build();
+                    usuarioRepository.save(usuario);
+                    creados++;
+                } catch (Exception e) {
+                    errores.add(new BulkUsuarioError(fila, email, "Error: " + e.getMessage()));
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al leer el archivo: " + e.getMessage());
+        }
+
+        log.info("Bulk usuarios: creados={}, errores={}", creados, errores.size());
+        return BulkUsuarioResponse.builder().creados(creados).errores(errores).build();
     }
 
     public UsuarioResponse toResponse(Usuario usuario) {

@@ -1,9 +1,11 @@
 package com.condos.usuario.controller;
 
+import com.condos.usuario.dto.BulkUsuarioResponse;
 import com.condos.usuario.dto.CreateUsuarioRequest;
 import com.condos.usuario.dto.ResidenteBasicoResponse;
 import com.condos.usuario.dto.UpdateUsuarioRequest;
 import com.condos.usuario.dto.UsuarioResponse;
+import org.springframework.web.multipart.MultipartFile;
 import com.condos.usuario.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +61,15 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('GUARDIA', 'ADMIN', 'SUPERADMIN')")
     public ResponseEntity<List<ResidenteBasicoResponse>> listarResidentes() {
         return ResponseEntity.ok(usuarioService.listarResidentes());
+    }
+
+    @PostMapping("/bulk")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<BulkUsuarioResponse> crearBulk(
+            @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("El archivo está vacío");
+        }
+        return ResponseEntity.ok(usuarioService.crearUsuariosBulk(file));
     }
 }
