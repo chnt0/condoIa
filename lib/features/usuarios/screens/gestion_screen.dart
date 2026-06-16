@@ -25,9 +25,10 @@ class _GestionScreenState extends ConsumerState<GestionScreen> {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv'],
+      withData: true, // necesario para web: carga los bytes en memoria
     );
 
-    if (result == null || result.files.single.path == null) return;
+    if (result == null || result.files.single.bytes == null) return;
     if (!context.mounted) return;
 
     final file = result.files.single;
@@ -48,7 +49,7 @@ class _GestionScreenState extends ConsumerState<GestionScreen> {
 
     final response = await ref
         .read(usuarioAdminProvider.notifier)
-        .uploadCsv(file.path!, file.name);
+        .uploadCsv(file.bytes!, file.name);
 
     if (!context.mounted) return;
     Navigator.pop(context);

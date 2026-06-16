@@ -90,10 +90,10 @@ class UsuarioAdminNotifier extends StateNotifier<UsuarioAdminState> {
   }
 
   Future<Map<String, dynamic>?> uploadCsv(
-      String filePath, String fileName) async {
+      List<int> bytes, String fileName) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _service.crearUsuariosBulk(filePath, fileName);
+      final result = await _service.crearUsuariosBulk(bytes, fileName);
       await cargarUsuarios();
       return result;
     } catch (e) {

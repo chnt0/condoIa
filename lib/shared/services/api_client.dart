@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../../core/constants/api_constants.dart';
 import '../models/api_error.dart';
@@ -169,10 +169,11 @@ class ApiClient {
     }
   }
 
-  Future<Map<String, dynamic>> postFile(
+  // Sube un archivo usando bytes — compatible con web y móvil
+  Future<Map<String, dynamic>> postFileBytes(
     String endpoint,
     String fieldName,
-    String filePath,
+    Uint8List bytes,
     String fileName, {
     Map<String, String>? additionalHeaders,
   }) async {
@@ -184,9 +185,9 @@ class ApiClient {
       headerMap.remove('Content-Type');
       request.headers.addAll(headerMap);
 
-      request.files.add(await http.MultipartFile.fromPath(
+      request.files.add(http.MultipartFile.fromBytes(
         fieldName,
-        filePath,
+        bytes,
         filename: fileName,
       ));
 

@@ -1,9 +1,9 @@
+import 'dart:typed_data';
 import '../../../core/constants/api_constants.dart';
 import '../../../shared/services/api_client.dart';
 import '../models/create_usuario_request.dart';
 import '../models/update_usuario_request.dart';
 import '../models/usuario_admin.dart';
-
 
 class UsuarioAdminService {
   final ApiClient apiClient;
@@ -38,11 +38,11 @@ class UsuarioAdminService {
   }
 
   Future<Map<String, dynamic>> crearUsuariosBulk(
-      String filePath, String fileName) async {
-    return apiClient.postFile(
+      List<int> bytes, String fileName) async {
+    return apiClient.postFileBytes(
       ApiConstants.usuariosBulk,
       'file',
-      filePath,
+      bytes is Uint8List ? bytes : Uint8List.fromList(bytes),
       fileName,
     );
   }
