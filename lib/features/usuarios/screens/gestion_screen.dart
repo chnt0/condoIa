@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,86 @@ class _GestionScreenState extends ConsumerState<GestionScreen> {
     });
   }
 
+  Future<void> _subirCsv(BuildContext context) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+    );
+
+    if (result == null || result.files.single.path == null) return;
+    if (!context.mounted) return;
+
+    final file = result.files.single;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Procesando archivo...'),
+          ],
+        ),
+      ),
+    );
+
+    final response = await ref
+        .read(usuarioAdminProvider.notifier)
+        .uploadCsv(file.path!, file.name);
+
+    if (!context.mounted) return;
+    Navigator.pop(context);
+
+    if (response != null) {
+      final creados = response['creados'] as int? ?? 0;
+      final errores = response['errores'] as List? ?? [];
+
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Resultado de carga'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('✓ $creados usuarios creados',
+                  style: const TextStyle(
+                      color: Colors.green, fontWeight: FontWeight.bold)),
+              if (errores.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text('✗ ${errores.length} errores:',
+                    style: const TextStyle(color: Colors.red)),
+                const SizedBox(height: 4),
+                ...errores.take(5).map((e) => Text(
+                      '• Fila ${e['fila']}: ${e['motivo']}',
+                      style: const TextStyle(fontSize: 12),
+                    )),
+                if (errores.length > 5)
+                  Text('  ... y ${errores.length - 5} más',
+                      style: const TextStyle(
+                          fontSize: 12, color: Colors.grey)),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cerrar')),
+          ],
+        ),
+      );
+    } else {
+      final error = ref.read(usuarioAdminProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(error ?? 'Error al procesar el archivo'),
+            backgroundColor: Colors.red),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(usuarioAdminProvider);
@@ -28,6 +109,11 @@ class _GestionScreenState extends ConsumerState<GestionScreen> {
       appBar: AppBar(
         title: const Text('Gestión de Usuarios'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file),
+            tooltip: 'Subir CSV',
+            onPressed: () => _subirCsv(context),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(usuarioAdminProvider.notifier).cargarUsuarios(),

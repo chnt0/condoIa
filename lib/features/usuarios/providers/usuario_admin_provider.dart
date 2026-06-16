@@ -88,6 +88,19 @@ class UsuarioAdminNotifier extends StateNotifier<UsuarioAdminState> {
   void clearError() {
     state = state.copyWith(error: null);
   }
+
+  Future<Map<String, dynamic>?> uploadCsv(
+      String filePath, String fileName) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final result = await _service.crearUsuariosBulk(filePath, fileName);
+      await cargarUsuarios();
+      return result;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return null;
+    }
+  }
 }
 
 final usuarioAdminServiceProvider = Provider<UsuarioAdminService>((ref) {

@@ -4,6 +4,7 @@ import '../models/create_usuario_request.dart';
 import '../models/update_usuario_request.dart';
 import '../models/usuario_admin.dart';
 
+
 class UsuarioAdminService {
   final ApiClient apiClient;
 
@@ -34,5 +35,15 @@ class UsuarioAdminService {
   Future<UsuarioAdmin> toggleEstado(int id) async {
     final response = await apiClient.put(ApiConstants.usuarioEstado(id), {});
     return UsuarioAdmin.fromJson(response);
+  }
+
+  Future<Map<String, dynamic>> crearUsuariosBulk(
+      String filePath, String fileName) async {
+    return apiClient.postFile(
+      ApiConstants.usuariosBulk,
+      'file',
+      filePath,
+      fileName,
+    );
   }
 }
