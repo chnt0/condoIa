@@ -13,7 +13,6 @@ class CrearUsuarioScreen extends ConsumerStatefulWidget {
 class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nombreController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _telefonoController = TextEditingController();
@@ -25,7 +24,6 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
   @override
   void dispose() {
     _nombreController.dispose();
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _telefonoController.dispose();
@@ -36,16 +34,19 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // username = email (autofill)
     final request = CreateUsuarioRequest(
-      username: _usernameController.text.trim(),
+      username: _emailController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text,
       nombreCompleto: _nombreController.text.trim(),
-      telefono:
-          _telefonoController.text.trim().isEmpty ? null : _telefonoController.text.trim(),
+      telefono: _telefonoController.text.trim().isEmpty
+          ? null
+          : _telefonoController.text.trim(),
       rol: _selectedRol,
-      unidadHabitacional:
-          _unidadController.text.trim().isEmpty ? null : _unidadController.text.trim(),
+      unidadHabitacional: _unidadController.text.trim().isEmpty
+          ? null
+          : _unidadController.text.trim(),
       esPropietario: _esPropietario,
     );
 
@@ -91,31 +92,19 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
                   labelText: 'Nombre completo *',
                   prefixIcon: Icon(Icons.person),
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Requerido' : null,
                 textInputAction: TextInputAction.next,
                 enabled: !isLoading,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username *',
-                  prefixIcon: Icon(Icons.alternate_email),
-                ),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Requerido';
-                  if (v.trim().length < 3) return 'Mínimo 3 caracteres';
-                  return null;
-                },
-                textInputAction: TextInputAction.next,
-                enabled: !isLoading,
-              ),
-              const SizedBox(height: 16),
+              // Email — se usa también como username
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email *',
                   prefixIcon: Icon(Icons.email),
+                  helperText: 'Se usará como usuario de acceso',
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (v) {
@@ -133,8 +122,9 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
                   labelText: 'Contraseña *',
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
-                    icon:
-                        Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                    icon: Icon(_obscurePassword
+                        ? Icons.visibility
+                        : Icons.visibility_off),
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
@@ -149,6 +139,25 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
                 enabled: !isLoading,
               ),
               const SizedBox(height: 16),
+              // Rol — antes de unidad para que el validator funcione en orden
+              DropdownButtonFormField<String>(
+                value: _selectedRol,
+                decoration: const InputDecoration(
+                  labelText: 'Rol *',
+                  prefixIcon: Icon(Icons.badge),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                      value: 'USUARIO', child: Text('USUARIO — Residente')),
+                  DropdownMenuItem(
+                      value: 'GUARDIA',
+                      child: Text('GUARDIA — Guardia de seguridad')),
+                ],
+                onChanged: isLoading
+                    ? null
+                    : (v) => setState(() => _selectedRol = v!),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _telefonoController,
                 decoration: const InputDecoration(
@@ -160,36 +169,34 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
                 enabled: !isLoading,
               ),
               const SizedBox(height: 16),
+              // Unidad habitacional — requerida para USUARIO
               TextFormField(
                 controller: _unidadController,
-                decoration: const InputDecoration(
-                  labelText: 'Unidad habitacional',
-                  prefixIcon: Icon(Icons.home),
-                  hintText: 'Ej: A-101',
+                decoration: InputDecoration(
+                  labelText: _selectedRol == 'USUARIO'
+                      ? 'Unidad habitacional *'
+                      : 'Unidad habitacional',
+                  prefixIcon: const Icon(Icons.home),
+                  hintText: 'Ej: Torre A-101',
                 ),
+                validator: (v) {
+                  if (_selectedRol == 'USUARIO' &&
+                      (v == null || v.trim().isEmpty)) {
+                    return 'Requerida para residentes';
+                  }
+                  return null;
+                },
                 textInputAction: TextInputAction.done,
                 enabled: !isLoading,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedRol,
-                decoration: const InputDecoration(
-                  labelText: 'Rol *',
-                  prefixIcon: Icon(Icons.badge),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'USUARIO', child: Text('USUARIO — Residente')),
-                  DropdownMenuItem(
-                      value: 'GUARDIA', child: Text('GUARDIA — Guardia de seguridad')),
-                ],
-                onChanged: isLoading ? null : (v) => setState(() => _selectedRol = v!),
               ),
               const SizedBox(height: 8),
               SwitchListTile(
                 title: const Text('Es propietario'),
                 subtitle: const Text('El residente es dueño de la unidad'),
                 value: _esPropietario,
-                onChanged: isLoading ? null : (v) => setState(() => _esPropietario = v),
+                onChanged: isLoading
+                    ? null
+                    : (v) => setState(() => _esPropietario = v),
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 24),
@@ -202,7 +209,8 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Text('Crear Usuario', style: TextStyle(fontSize: 16)),
+                    : const Text('Crear Usuario',
+                        style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
