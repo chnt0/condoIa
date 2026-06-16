@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: condos-api
+    runtime: java
+    plan: free
+    rootDir: backend
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -Xms128m -Xmx400m -XX:+UseG1GC -jar target/condos-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /api/auth/login
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # Las siguientes variables se configuran manualmente en el dashboard de Render
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
