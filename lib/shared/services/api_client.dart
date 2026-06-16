@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../core/constants/api_constants.dart';
 import '../models/api_error.dart';
@@ -165,6 +166,41 @@ class ApiClient {
       throw ApiException(
         'Error de conexión. Verifique su internet e intente nuevamente.',
       );
+    }
+  }
+
+  Future<Map<String, dynamic>> postFile(
+    String endpoint,
+    String fieldName,
+    String filePath,
+    String fileName, {
+    Map<String, String>? additionalHeaders,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl$endpoint');
+      final request = http.MultipartRequest('POST', url);
+
+      final headerMap = _getHeaders(additionalHeaders: additionalHeaders);
+      headerMap.remove('Content-Type');
+      request.headers.addAll(headerMap);
+
+      request.files.add(await http.MultipartFile.fromPath(
+        fieldName,
+        filePath,
+        filename: fileName,
+      ));
+
+      final streamedResponse = await request.send().timeout(timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw ApiException(
+        'La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.',
+        statusCode: 408,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Error de conexión. Verifique su internet e intente nuevamente.');
     }
   }
 

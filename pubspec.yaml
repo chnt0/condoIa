@@ -51,6 +51,9 @@ dependencies:
   # QR code scanner
   mobile_scanner: ^6.0.0
 
+  # File picker para carga masiva de usuarios
+  file_picker: ^8.0.0
+
   # Utilities
   equatable: ^2.0.5
   json_annotation: ^4.8.1

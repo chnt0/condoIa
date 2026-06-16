@@ -19,6 +19,7 @@ class ApiConstants {
 
   // Usuarios (gestión por ADMIN)
   static const String usuarios = '$apiPrefix/usuarios';
+  static const String usuariosBulk = '$apiPrefix/usuarios/bulk';
   static String usuarioById(int id) => '$apiPrefix/usuarios/$id';
   static String usuarioEstado(int id) => '$apiPrefix/usuarios/$id/estado';
 
