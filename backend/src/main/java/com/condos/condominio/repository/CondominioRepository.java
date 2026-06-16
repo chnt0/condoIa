@@ -10,4 +10,5 @@ import java.util.List;
 public interface CondominioRepository extends JpaRepository<Condominio, Long> {
 
     List<Condominio> findByActivoTrue();
+    List<Condominio> findAllByOrderByNombreAsc();
 }

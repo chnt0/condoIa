@@ -159,7 +159,7 @@ public class UsuarioService {
         return usuario;
     }
 
-    private UsuarioResponse toResponse(Usuario usuario) {
+    public UsuarioResponse toResponse(Usuario usuario) {
         return UsuarioResponse.builder()
                 .id(usuario.getId())
                 .username(usuario.getUsername())
