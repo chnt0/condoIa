@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +55,8 @@ public class VisitaService {
         Condominio condominio = condominioRepository.findById(condominioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Condominio no encontrado"));
 
-        // Crear entidad Visita
+        // Crear entidad Visita con UUID temporal en codigoQrHash
+        // (se reemplaza con el hash real después de obtener el ID)
         Visita visita = Visita.builder()
                 .condominio(condominio)
                 .usuario(usuario)
@@ -64,6 +66,7 @@ public class VisitaService {
                 .motivo(request.getMotivo())
                 .vehiculoPlacas(request.getVehiculoPlacas())
                 .estado(EstadoVisita.PROGRAMADA)
+                .codigoQrHash(UUID.randomUUID().toString())
                 .build();
 
         // Guardar para obtener ID
