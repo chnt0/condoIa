@@ -22,6 +22,12 @@ class ApiConstants {
   static String usuarioById(int id) => '$apiPrefix/usuarios/$id';
   static String usuarioEstado(int id) => '$apiPrefix/usuarios/$id/estado';
 
+  // Condominios (SUPERADMIN)
+  static const String condominios = '$apiPrefix/condominios';
+  static String condominioById(int id) => '$apiPrefix/condominios/$id';
+  static String toggleCondominio(int id) => '$apiPrefix/condominios/$id/toggle';
+  static String condominioAdmins(int id) => '$apiPrefix/condominios/$id/admins';
+
   // Áreas Comunes
   static const String areasComunes = '$apiPrefix/areas-comunes';
   static String areaComunById(int id) => '$apiPrefix/areas-comunes/$id';
