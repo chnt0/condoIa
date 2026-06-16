@@ -1,11 +1,13 @@
 {
   "info": {
     "name": "Condos API",
-    "description": "Sistema de Administración de Condominios — todos los endpoints del backend Spring Boot.\n\n## Uso\n1. Ejecutar primero **Auth / Login Admin** para obtener el token\n2. El token se guarda automáticamente en la variable `adminToken`\n3. Hacer lo mismo con **Login Residente** y **Login Guardia**\n\n## Variables de colección\n- `baseUrl` = http://localhost:8080\n- `adminToken` — se llena automáticamente al hacer login\n- `userToken` — se llena automáticamente al hacer login\n- `guardiaToken` — se llena automáticamente al hacer login",
+    "description": "Sistema de Administración de Condominios — todos los endpoints del backend Spring Boot.\n\n## Cambiar entre Local y Producción\nModifica la variable `baseUrl` en la colección:\n- **Local:** `http://localhost:8080`\n- **Producción:** `https://condoia.onrender.com`\n\n## Uso\n1. Ejecutar primero **Auth / Login Admin** para obtener el token\n2. El token se guarda automáticamente en la variable `adminToken`\n3. Hacer lo mismo con **Login Residente** y **Login Guardia**\n\n## Variables de colección\n- `baseUrl` — apunta a local o prod (cambiar según necesidad)\n- `localUrl` = http://localhost:8080\n- `prodUrl` = https://condoia.onrender.com\n- `adminToken` — se llena automáticamente al hacer login\n- `userToken` — se llena automáticamente al hacer login\n- `guardiaToken` — se llena automáticamente al hacer login",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "baseUrl", "value": "https://condoia.onrender.com", "type": "string" },
+    { "key": "localUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "prodUrl", "value": "https://condoia.onrender.com", "type": "string" },
     { "key": "adminToken", "value": "", "type": "string" },
     { "key": "userToken", "value": "", "type": "string" },
     { "key": "guardiaToken", "value": "", "type": "string" },
