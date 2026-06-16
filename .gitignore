@@ -58,3 +58,6 @@ backend/mvnw.cmd
 .env
 backend/.env
 *.env.local
+
+# Archivo de secretos locales — NUNCA subir a GitHub
+SECRETOS-LOCALES.md
