@@ -13,6 +13,9 @@ import '../../features/pagos/screens/crear_cuota_screen.dart';
 import '../../features/pagos/screens/detalle_cuota_screen.dart';
 import '../../features/pagos/screens/reportar_pago_screen.dart';
 import '../../features/paquetes/screens/registrar_paquete_screen.dart';
+import '../../features/superadmin/providers/condominio_sa_provider.dart';
+import '../../features/superadmin/screens/crear_editar_condominio_screen.dart';
+import '../../features/superadmin/screens/detalle_condominio_screen.dart';
 import '../../features/usuarios/screens/crear_usuario_screen.dart';
 import '../../features/usuarios/screens/detalle_usuario_screen.dart';
 import '../../features/visitas/screens/detalle_visita_screen.dart';
@@ -41,11 +44,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         builder: (_, __) => const MainScaffold(),
         routes: [
+          // Visitas
           GoRoute(
             path: 'visitas/:id',
             builder: (context, state) => DetalleVisitaScreen(
                 visitaId: int.parse(state.pathParameters['id']!)),
           ),
+          // Usuarios
           GoRoute(
             path: 'usuarios/nuevo',
             builder: (_, __) => const CrearUsuarioScreen(),
@@ -55,6 +60,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => DetalleUsuarioScreen(
                 usuarioId: int.parse(state.pathParameters['id']!)),
           ),
+          // Cuotas
           GoRoute(
             path: 'cuotas/nueva',
             builder: (_, __) => const CrearCuotaScreen(),
@@ -69,10 +75,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => ReportarPagoScreen(
                 cuotaUsuarioId: int.parse(state.pathParameters['id']!)),
           ),
+          // Paquetes
           GoRoute(
             path: 'paquetes/nuevo',
             builder: (_, __) => const RegistrarPaqueteScreen(),
           ),
+          // Incidentes
           GoRoute(
             path: 'incidentes/nuevo',
             builder: (_, __) => const CrearIncidenteScreen(),
@@ -82,6 +90,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => DetalleIncidenteScreen(
                 incidenteId: int.parse(state.pathParameters['id']!)),
           ),
+          // Notificaciones
           GoRoute(
             path: 'notificaciones/nueva',
             builder: (_, __) => const CrearNotificacionScreen(),
@@ -91,6 +100,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => DetalleNotificacionScreen(
                 notificacionId: int.parse(state.pathParameters['id']!)),
           ),
+          // Áreas
           GoRoute(
             path: 'areas/nueva',
             builder: (_, __) => const CrearEditarAreaScreen(),
@@ -111,6 +121,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: 'areas/:id/disponibilidad',
             builder: (context, state) => DisponibilidadScreen(
                 areaComunId: int.parse(state.pathParameters['id']!)),
+          ),
+          // Condominios (SUPERADMIN)
+          GoRoute(
+            path: 'condominios/nuevo',
+            builder: (_, __) => const CrearEditarCondominioScreen(),
+          ),
+          GoRoute(
+            path: 'condominios/:id/editar',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              final condominio = ref
+                  .read(condominioSaProvider)
+                  .condominios
+                  .where((c) => c.id == id)
+                  .firstOrNull;
+              return CrearEditarCondominioScreen(condominio: condominio);
+            },
+          ),
+          GoRoute(
+            path: 'condominios/:id/detalle',
+            builder: (context, state) => DetalleCondominioScreen(
+                condominioId: int.parse(state.pathParameters['id']!)),
           ),
         ],
       ),
