@@ -141,13 +141,6 @@ class _DetalleIncidenteScreenState
         EstadoIncidente.cancelado => 'CANCELADO',
       };
 
-  String _categoriaLabel(CategoriaIncidente c) => switch (c) {
-        CategoriaIncidente.mantenimiento => 'Mantenimiento',
-        CategoriaIncidente.seguridad => 'Seguridad',
-        CategoriaIncidente.ruido => 'Ruido',
-        CategoriaIncidente.limpieza => 'Limpieza',
-        CategoriaIncidente.otro => 'Otro',
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +190,7 @@ class _DetalleIncidenteScreenState
                     ),
                     Chip(
                         label:
-                            Text(_categoriaLabel(incidente.categoria))),
+                            Text(incidente.categoria)),
                   ],
                 ),
                 const SizedBox(height: 12),

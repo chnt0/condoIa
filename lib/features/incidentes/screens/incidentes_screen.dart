@@ -5,6 +5,7 @@ import '../../../shared/models/usuario.dart';
 import '../../../shared/providers/auth_provider.dart';
 import '../models/incidente.dart';
 import '../providers/incidente_provider.dart';
+import '../providers/categoria_provider.dart';
 
 class IncidentesScreen extends ConsumerStatefulWidget {
   const IncidentesScreen({super.key});
@@ -51,6 +52,15 @@ class _IncidentesScreenState extends ConsumerState<IncidentesScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Incidentes'),
+          actions: [
+            if (!esUsuario)
+              IconButton(
+                icon: const Icon(Icons.category_outlined),
+                tooltip: 'Gestionar categorías',
+                onPressed: () =>
+                    context.push('/home/incidentes/categorias'),
+              ),
+          ],
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Pendiente'),
@@ -118,13 +128,6 @@ class _IncidenteList extends StatelessWidget {
         EstadoIncidente.cancelado => Colors.grey,
       };
 
-  String _categoriaLabel(CategoriaIncidente c) => switch (c) {
-        CategoriaIncidente.mantenimiento => 'Mantenimiento',
-        CategoriaIncidente.seguridad => 'Seguridad',
-        CategoriaIncidente.ruido => 'Ruido',
-        CategoriaIncidente.limpieza => 'Limpieza',
-        CategoriaIncidente.otro => 'Otro',
-      };
 
   String _estadoLabel(EstadoIncidente e) => switch (e) {
         EstadoIncidente.pendiente => 'PENDIENTE',
@@ -160,7 +163,7 @@ class _IncidenteList extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_categoriaLabel(i.categoria)),
+                  Text(i.categoria),
                   Text(i.ubicacion,
                       style: const TextStyle(fontSize: 12)),
                 ],

@@ -34,9 +34,8 @@ public class Incidente {
     @JoinColumn(name = "usuario_reporta_id", nullable = false)
     private Usuario usuarioReporta;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private CategoriaIncidente categoria;
+    @Column(nullable = false, length = 100)
+    private String categoria;
 
     @Column(nullable = false, length = 200)
     private String titulo;

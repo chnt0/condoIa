@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../models/create_incidente_request.dart';
 import '../models/incidente.dart';
 import '../providers/incidente_provider.dart';
+import '../providers/categoria_provider.dart';
 
 class CrearIncidenteScreen extends ConsumerStatefulWidget {
   const CrearIncidenteScreen({super.key});
@@ -15,11 +16,19 @@ class CrearIncidenteScreen extends ConsumerStatefulWidget {
 
 class _CrearIncidenteScreenState extends ConsumerState<CrearIncidenteScreen> {
   final _formKey = GlobalKey<FormState>();
-  CategoriaIncidente _categoria = CategoriaIncidente.mantenimiento;
+  String? _categoriaSeleccionada;
   PrioridadIncidente _prioridad = PrioridadIncidente.media;
   final _tituloCtrl = TextEditingController();
   final _descripcionCtrl = TextEditingController();
   final _ubicacionCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(categoriaProvider.notifier).cargarCategorias();
+    });
+  }
 
   @override
   void dispose() {
@@ -29,18 +38,16 @@ class _CrearIncidenteScreenState extends ConsumerState<CrearIncidenteScreen> {
     super.dispose();
   }
 
-  String _categoriaLabel(CategoriaIncidente c) => switch (c) {
-        CategoriaIncidente.mantenimiento => 'Mantenimiento',
-        CategoriaIncidente.seguridad => 'Seguridad',
-        CategoriaIncidente.ruido => 'Ruido',
-        CategoriaIncidente.limpieza => 'Limpieza',
-        CategoriaIncidente.otro => 'Otro',
-      };
-
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_categoriaSeleccionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecciona una categoría')),
+      );
+      return;
+    }
     final request = CreateIncidenteRequest(
-      categoria: _categoria,
+      categoria: _categoriaSeleccionada!,
       titulo: _tituloCtrl.text.trim(),
       descripcion: _descripcionCtrl.text.trim(),
       ubicacion: _ubicacionCtrl.text.trim(),
@@ -69,6 +76,9 @@ class _CrearIncidenteScreenState extends ConsumerState<CrearIncidenteScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(incidenteProvider);
+    final catState = ref.watch(categoriaProvider);
+    final categorias =
+        catState.categorias.where((c) => c.activa).toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Reportar Incidente')),
@@ -78,20 +88,27 @@ class _CrearIncidenteScreenState extends ConsumerState<CrearIncidenteScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              DropdownButtonFormField<CategoriaIncidente>(
-                value: _categoria,
-                decoration: const InputDecoration(
-                  labelText: 'Categoría',
-                  border: OutlineInputBorder(),
-                ),
-                items: CategoriaIncidente.values
-                    .map((c) => DropdownMenuItem(
-                          value: c,
-                          child: Text(_categoriaLabel(c)),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _categoria = v!),
-              ),
+              // Categoría dinámica
+              catState.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : DropdownButtonFormField<String>(
+                      value: _categoriaSeleccionada,
+                      decoration: const InputDecoration(
+                        labelText: 'Categoría *',
+                        border: OutlineInputBorder(),
+                      ),
+                      hint: const Text('Selecciona una categoría'),
+                      items: categorias
+                          .map((c) => DropdownMenuItem(
+                                value: c.nombre,
+                                child: Text(c.nombre),
+                              ))
+                          .toList(),
+                      onChanged: (v) =>
+                          setState(() => _categoriaSeleccionada = v),
+                      validator: (v) =>
+                          v == null ? 'Selecciona una categoría' : null,
+                    ),
               const SizedBox(height: 16),
               DropdownButtonFormField<PrioridadIncidente>(
                 value: _prioridad,

@@ -46,6 +46,10 @@ class ApiConstants {
   static const String notificaciones = '$apiPrefix/notificaciones';
   static String notificacionById(int id) => '$apiPrefix/notificaciones/$id';
 
+  // Categorías de incidentes
+  static const String categoriasIncidente = '$apiPrefix/categorias-incidente';
+  static String toggleCategoriaIncidente(int id) => '$apiPrefix/categorias-incidente/$id/toggle';
+
   // Incidentes
   static const String incidentes = '$apiPrefix/incidentes';
   static const String misIncidentes = '$apiPrefix/incidentes/mis-incidentes';

@@ -5,7 +5,7 @@ part 'create_incidente_request.g.dart';
 
 @JsonSerializable()
 class CreateIncidenteRequest {
-  final CategoriaIncidente categoria;
+  final String categoria;       // nombre dinámico de la categoría
   final String titulo;
   final String descripcion;
   final String ubicacion;

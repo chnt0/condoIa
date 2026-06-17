@@ -1,6 +1,5 @@
 package com.condos.incidente.dto;
 
-import com.condos.incidente.model.CategoriaIncidente;
 import com.condos.incidente.model.EstadoIncidente;
 import com.condos.incidente.model.PrioridadIncidente;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class IncidenteResponse {
     private Long id;
-    private CategoriaIncidente categoria;
+    private String categoria;
     private String titulo;
     private String descripcion;
     private String ubicacion;

@@ -38,7 +38,7 @@ enum EstadoIncidente {
 @JsonSerializable()
 class Incidente {
   final int id;
-  final CategoriaIncidente categoria;
+  final String categoria;   // nombre dinámico de la categoría
   final String titulo;
   final String descripcion;
   final String ubicacion;

@@ -5,6 +5,7 @@ import '../../features/areas/screens/crear_editar_area_screen.dart';
 import '../../features/areas/screens/disponibilidad_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/incidentes/screens/categorias_screen.dart';
 import '../../features/incidentes/screens/crear_incidente_screen.dart';
 import '../../features/incidentes/screens/detalle_incidente_screen.dart';
 import '../../features/notificaciones/screens/crear_notificacion_screen.dart';
@@ -81,6 +82,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (_, __) => const RegistrarPaqueteScreen(),
           ),
           // Incidentes
+          GoRoute(
+            path: 'incidentes/categorias',
+            builder: (_, __) => const CategoriasScreen(),
+          ),
           GoRoute(
             path: 'incidentes/nuevo',
             builder: (_, __) => const CrearIncidenteScreen(),
