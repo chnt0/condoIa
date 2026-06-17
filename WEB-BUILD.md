@@ -46,8 +46,42 @@ git push
 
 ---
 
+---
+
+## Correr en local (desarrollo)
+
+### 1. Arrancar el backend
+
+```bash
+cd ~/flutter/condos/backend
+./mvnw spring-boot:run
+```
+
+El backend queda en `http://localhost:8080`.
+
+### 2. Correr la app web
+
+```bash
+cd ~/flutter/condos
+~/flutter/condos/flutter/bin/flutter run -d chrome --web-port 5000
+```
+
+Abre Chrome en `http://localhost:5000`.  
+No necesitas `--dart-define` — usa `localhost:8080` por default.
+
+### Credenciales de prueba
+
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| `admin` | `admin123` | ADMIN |
+| `superadmin` | `admin123` | SUPERADMIN |
+| `residente1` | `pass123` | USUARIO |
+| `guardia1` | `pass123` | GUARDIA |
+
+---
+
 ## Notas
 
 - El campo `BASE_URL` debe apuntar siempre al backend de producción.
-- Para pruebas locales corre `flutter run -d chrome --web-port 5000` (sin `--dart-define`).
 - La pantalla de **Escanear QR** no funciona en web — es exclusiva de la app móvil.
+- Usuarios creados por CSV reciben contraseña temporal `Condos2024!`.
