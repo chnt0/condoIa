@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.condos.notificacion.service.NotificacionPushService;
 import com.condos.visita.dto.CreateVisitaDirectaRequest;
 
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ public class VisitaService {
     private final UsuarioRepository usuarioRepository;
     private final CondominioRepository condominioRepository;
     private final QrCodeService qrCodeService;
+    private final NotificacionPushService notificacionPushService;
 
     /**
      * Crea una nueva visita programada.
@@ -271,6 +273,14 @@ public class VisitaService {
         visita = visitaRepository.save(visita);
         log.info("Visita directa registrada: id={}, visitante={}, guardia={}",
                 visita.getId(), visita.getNombreVisitante(), guardia.getUsername());
+
+        // Notificar push al residente destinatario
+        notificacionPushService.notificarVisitaDirecta(
+                destinatario.getId(),
+                request.getNombreVisitante(),
+                request.getMotivo()
+        );
+
         return toResponse(visita);
     }
 

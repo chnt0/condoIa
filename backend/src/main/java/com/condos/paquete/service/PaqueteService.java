@@ -4,6 +4,7 @@ import com.condos.common.exceptions.ResourceNotFoundException;
 import com.condos.common.utils.TenantContext;
 import com.condos.condominio.model.Condominio;
 import com.condos.condominio.repository.CondominioRepository;
+import com.condos.notificacion.service.NotificacionPushService;
 import com.condos.paquete.dto.CreatePaqueteRequest;
 import com.condos.paquete.dto.PaqueteResponse;
 import com.condos.paquete.model.EstadoPaquete;
@@ -28,6 +29,7 @@ public class PaqueteService {
     private final PaqueteRepository paqueteRepository;
     private final UsuarioRepository usuarioRepository;
     private final CondominioRepository condominioRepository;
+    private final NotificacionPushService notificacionPushService;
 
     @Transactional
     public PaqueteResponse registrarPaquete(CreatePaqueteRequest request, Long guardiaId) {
@@ -52,6 +54,10 @@ public class PaqueteService {
 
         paquete = paqueteRepository.save(paquete);
         log.info("Paquete registrado: id={}, destinatario={}", paquete.getId(), destinatario.getNombreCompleto());
+
+        // Notificar push al residente
+        notificacionPushService.notificarPaquete(destinatario.getId(), request.getDescripcion());
+
         return toResponse(paquete);
     }
 

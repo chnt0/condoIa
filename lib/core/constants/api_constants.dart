@@ -5,6 +5,8 @@ class ApiConstants {
       String.fromEnvironment('BASE_URL', defaultValue: 'http://localhost:8080');
   static const String apiPrefix = '/api';
 
+  static const String deviceTokens = '$apiPrefix/device-tokens';
+
   static const String login = '$apiPrefix/auth/login';
   static const String me = '$apiPrefix/auth/me';
   static const String cambiarPassword = '$apiPrefix/auth/cambiar-password';
