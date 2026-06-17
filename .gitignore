@@ -68,3 +68,7 @@ usuarios_ejemplo.csv
 flutter/
 flutter_macos_arm64_3.44.0-stable.zip
 *.zip
+
+# Firebase service account key
+*firebase-adminsdk*.json
+*service-account*.json

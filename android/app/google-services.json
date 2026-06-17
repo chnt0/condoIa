@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "376041502425",
+    "project_id": "condos-4b91b",
+    "storage_bucket": "condos-4b91b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376041502425:android:950d54b8f29558ab4bf0c8",
+        "android_client_info": {
+          "package_name": "com.condos.condos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_DlWyxf5yFFswWdyPC-aIQFFaDrV6_y8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
