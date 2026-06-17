@@ -25,7 +25,16 @@ class _CuotasAdminScreenState extends ConsumerState<CuotasAdminScreen> {
     final state = ref.watch(cuotaProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cuotas')),
+      appBar: AppBar(
+        title: const Text('Cuotas'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Ver reporte',
+            onPressed: () => context.push('/home/cuotas/reporte'),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/home/cuotas/nueva'),
         child: const Icon(Icons.add),

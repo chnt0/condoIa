@@ -11,6 +11,7 @@ import '../../features/incidentes/screens/detalle_incidente_screen.dart';
 import '../../features/notificaciones/screens/crear_notificacion_screen.dart';
 import '../../features/notificaciones/screens/detalle_notificacion_screen.dart';
 import '../../features/pagos/screens/crear_cuota_screen.dart';
+import '../../features/pagos/screens/reporte_cuotas_screen.dart';
 import '../../features/pagos/screens/detalle_cuota_screen.dart';
 import '../../features/pagos/screens/reportar_pago_screen.dart';
 import '../../features/paquetes/screens/registrar_paquete_screen.dart';
@@ -67,6 +68,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 usuarioId: int.parse(state.pathParameters['id']!)),
           ),
           // Cuotas
+          GoRoute(
+            path: 'cuotas/reporte',
+            builder: (_, __) => const ReporteCuotasScreen(),
+          ),
           GoRoute(
             path: 'cuotas/nueva',
             builder: (_, __) => const CrearCuotaScreen(),
