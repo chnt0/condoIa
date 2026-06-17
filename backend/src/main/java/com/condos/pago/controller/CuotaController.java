@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/cuotas")
 @RequiredArgsConstructor
@@ -51,6 +53,20 @@ public class CuotaController {
             Authentication authentication) {
         Long usuarioId = Long.parseLong(authentication.getName());
         return ResponseEntity.ok(cuotaService.reportarPago(cuotaUsuarioId, request, usuarioId));
+    }
+
+    @GetMapping("/reporte")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<List<CuotaUsuarioResponse>> reporte(
+            @RequestParam(required = false) String mes,
+            @RequestParam(required = false, defaultValue = "TODOS") String estado) {
+        return ResponseEntity.ok(cuotaService.listarReporte(mes, estado));
+    }
+
+    @GetMapping("/morosidad")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<MorosidadResponse> morosidad() {
+        return ResponseEntity.ok(cuotaService.obtenerMorosidad());
     }
 
     @PutMapping("/{cuotaUsuarioId}/confirmar")

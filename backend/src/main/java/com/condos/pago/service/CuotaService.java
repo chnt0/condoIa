@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -143,6 +145,33 @@ public class CuotaService {
         cu = cuotaUsuarioRepository.save(cu);
         log.info("Pago {}: cuotaUsuarioId={}", cu.getEstado(), cuotaUsuarioId);
         return toCuotaUsuarioResponse(cu);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CuotaUsuarioResponse> listarReporte(String mes, String estadoStr) {
+        Long condominioId = TenantContext.getCondominioId();
+        EstadoPago estadoEnum = null;
+        if (estadoStr != null && !estadoStr.isBlank() && !estadoStr.equalsIgnoreCase("TODOS")) {
+            estadoEnum = EstadoPago.valueOf(estadoStr.toUpperCase());
+        }
+        return cuotaUsuarioRepository.findReporte(condominioId, mes, estadoEnum)
+                .stream().map(this::toCuotaUsuarioResponse).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public MorosidadResponse obtenerMorosidad() {
+        Long condominioId = TenantContext.getCondominioId();
+        List<CuotaUsuario> morosos = cuotaUsuarioRepository.findMorosos(condominioId, LocalDate.now());
+
+        BigDecimal totalMonto = morosos.stream()
+                .map(cu -> cu.getCuota().getMonto())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        long totalMorosos = morosos.stream()
+                .map(cu -> cu.getUsuario().getId())
+                .distinct().count();
+
+        return new MorosidadResponse(totalMonto, (int) totalMorosos, morosos.size());
     }
 
     private CuotaResponse toCuotaResponse(Cuota cuota) {
