@@ -14,4 +14,6 @@ public class CreatePaqueteRequest {
     private String descripcion;
 
     private String notas;
+
+    private String foto;
 }

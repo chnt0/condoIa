@@ -15,6 +15,7 @@ public class PaqueteResponse {
     private String destinatarioUnidad;
     private String descripcion;
     private String notas;
+    private String foto;
     private LocalDateTime fechaHoraLlegada;
     private Long guardiaRegistroId;
     private String guardiaRegistroNombre;

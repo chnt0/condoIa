@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/create_paquete_request.dart';
 import '../models/residente_basico.dart';
 import '../providers/paquete_provider.dart';
@@ -21,6 +25,8 @@ class _RegistrarPaqueteScreenState
   final _busquedaCtrl = TextEditingController();
   ResidenteBasico? _selectedResidente;
   String _filtro = '';
+  Uint8List? _fotoBytes;
+  String? _fotoBase64;
 
   @override
   void initState() {
@@ -41,6 +47,38 @@ class _RegistrarPaqueteScreenState
     super.dispose();
   }
 
+  Future<void> _tomarFoto() async {
+    final fuente = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Tomar foto'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Elegir de galería'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (fuente == null) return;
+    final imagen = await ImagePicker()
+        .pickImage(source: fuente, imageQuality: 70, maxWidth: 1200);
+    if (imagen == null) return;
+    final bytes = await imagen.readAsBytes();
+    setState(() {
+      _fotoBytes = bytes;
+      _fotoBase64 = base64Encode(bytes);
+    });
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedResidente == null) {
@@ -53,6 +91,7 @@ class _RegistrarPaqueteScreenState
       usuarioDestinatarioId: _selectedResidente!.id,
       descripcion: _descripcionCtrl.text.trim(),
       notas: _notasCtrl.text.trim().isEmpty ? null : _notasCtrl.text.trim(),
+      foto: _fotoBase64,
     );
     final paquete =
         await ref.read(paqueteProvider.notifier).registrarPaquete(request);
@@ -173,6 +212,34 @@ class _RegistrarPaqueteScreenState
                         },
                       ),
               ),
+              const SizedBox(height: 20),
+              const Text('Foto del paquete (opcional)',
+                  style: TextStyle(fontWeight: FontWeight.w500)),
+              const SizedBox(height: 8),
+              if (_fotoBytes != null) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.memory(_fotoBytes!,
+                      height: 160, fit: BoxFit.cover),
+                ),
+                const SizedBox(height: 4),
+                TextButton.icon(
+                  onPressed: () =>
+                      setState(() { _fotoBytes = null; _fotoBase64 = null; }),
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  label: const Text('Eliminar foto',
+                      style: TextStyle(color: Colors.red)),
+                ),
+              ] else
+                OutlinedButton.icon(
+                  onPressed: _tomarFoto,
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Fotografiar paquete'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 0),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: state.isLoading ? null : _submit,

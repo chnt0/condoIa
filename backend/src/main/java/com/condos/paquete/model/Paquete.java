@@ -40,6 +40,9 @@ public class Paquete {
     @Column(columnDefinition = "TEXT")
     private String notas;
 
+    @Column(columnDefinition = "TEXT")
+    private String foto;
+
     @Column(name = "fecha_hora_llegada", nullable = false)
     private LocalDateTime fechaHoraLlegada;
 

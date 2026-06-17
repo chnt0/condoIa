@@ -7,11 +7,13 @@ class CreatePaqueteRequest {
   final int usuarioDestinatarioId;
   final String descripcion;
   final String? notas;
+  final String? foto;
 
   CreatePaqueteRequest({
     required this.usuarioDestinatarioId,
     required this.descripcion,
     this.notas,
+    this.foto,
   });
 
   factory CreatePaqueteRequest.fromJson(Map<String, dynamic> json) =>

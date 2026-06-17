@@ -8,6 +8,7 @@ CreatePaqueteRequest _$CreatePaqueteRequestFromJson(
       usuarioDestinatarioId: (json['usuarioDestinatarioId'] as num).toInt(),
       descripcion: json['descripcion'] as String,
       notas: json['notas'] as String?,
+      foto: json['foto'] as String?,
     );
 
 Map<String, dynamic> _$CreatePaqueteRequestToJson(
@@ -16,4 +17,5 @@ Map<String, dynamic> _$CreatePaqueteRequestToJson(
       'usuarioDestinatarioId': instance.usuarioDestinatarioId,
       'descripcion': instance.descripcion,
       'notas': instance.notas,
+      'foto': instance.foto,
     };

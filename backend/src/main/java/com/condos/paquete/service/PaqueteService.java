@@ -48,6 +48,7 @@ public class PaqueteService {
                 .destinatario(destinatario)
                 .descripcion(request.getDescripcion())
                 .notas(request.getNotas())
+                .foto(request.getFoto())
                 .guardiaRegistro(guardia)
                 .estado(EstadoPaquete.PENDIENTE)
                 .build();
@@ -103,6 +104,7 @@ public class PaqueteService {
                 .destinatarioUnidad(p.getDestinatario().getUnidadHabitacional())
                 .descripcion(p.getDescripcion())
                 .notas(p.getNotas())
+                .foto(p.getFoto())
                 .fechaHoraLlegada(p.getFechaHoraLlegada())
                 .guardiaRegistroId(p.getGuardiaRegistro().getId())
                 .guardiaRegistroNombre(p.getGuardiaRegistro().getNombreCompleto())
