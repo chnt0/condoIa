@@ -61,3 +61,10 @@ backend/.env
 
 # Archivo de secretos locales — NUNCA subir a GitHub
 SECRETOS-LOCALES.md
+# CSV de ejemplo — ignorar en git
+usuarios_ejemplo.csv
+
+# Flutter SDK instalado localmente
+flutter/
+flutter_macos_arm64_3.44.0-stable.zip
+*.zip

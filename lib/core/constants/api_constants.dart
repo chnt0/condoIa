@@ -7,6 +7,7 @@ class ApiConstants {
 
   static const String login = '$apiPrefix/auth/login';
   static const String me = '$apiPrefix/auth/me';
+  static const String cambiarPassword = '$apiPrefix/auth/cambiar-password';
 
   // Visitas
   static const String visitas = '$apiPrefix/visitas';
@@ -22,6 +23,7 @@ class ApiConstants {
   static const String usuariosBulk = '$apiPrefix/usuarios/bulk';
   static String usuarioById(int id) => '$apiPrefix/usuarios/$id';
   static String usuarioEstado(int id) => '$apiPrefix/usuarios/$id/estado';
+  static String resetearPassword(int id) => '$apiPrefix/usuarios/$id/resetear-password';
 
   // Condominios (SUPERADMIN)
   static const String condominios = '$apiPrefix/condominios';

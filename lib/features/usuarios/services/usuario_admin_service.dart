@@ -37,6 +37,12 @@ class UsuarioAdminService {
     return UsuarioAdmin.fromJson(response);
   }
 
+  Future<void> resetearPassword(int id, String nuevaPassword) async {
+    await apiClient.put(ApiConstants.resetearPassword(id), {
+      'nuevaPassword': nuevaPassword,
+    });
+  }
+
   Future<Map<String, dynamic>> crearUsuariosBulk(
       List<int> bytes, String fileName) async {
     return apiClient.postFileBytes(

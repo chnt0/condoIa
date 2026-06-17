@@ -51,6 +51,11 @@ public class AuthService {
         if (usuario.getCondominio() != null) {
             condominioId = usuario.getCondominio().getId();
             condominioNombre = usuario.getCondominio().getNombre();
+
+            // Bloquear login si el condominio está desactivado
+            if (!usuario.getCondominio().getActivo()) {
+                throw new UnauthorizedException("El condominio está desactivado. Contacta al administrador.");
+            }
         }
 
         // Generate JWT token

@@ -44,6 +44,14 @@ class AuthService {
     return usuario;
   }
 
+  Future<void> cambiarPassword(
+      String passwordActual, String passwordNuevo) async {
+    await apiClient.put(ApiConstants.cambiarPassword, {
+      'passwordActual': passwordActual,
+      'passwordNuevo': passwordNuevo,
+    });
+  }
+
   Future<void> logout() async {
     await storageService.clearToken();
     await storageService.clearUser();

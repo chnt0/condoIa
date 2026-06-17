@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/update_usuario_request.dart';
 import '../models/usuario_admin.dart';
 import '../providers/usuario_admin_provider.dart';
+import '../services/usuario_admin_service.dart';
+import '../../../shared/providers/auth_provider.dart';
 
 class DetalleUsuarioScreen extends ConsumerStatefulWidget {
   final int usuarioId;
@@ -80,6 +82,73 @@ class _DetalleUsuarioScreenState extends ConsumerState<DetalleUsuarioScreen> {
       SnackBar(
         content: Text(error ?? 'Usuario actualizado'),
         backgroundColor: error != null ? Colors.red : Colors.green,
+      ),
+    );
+  }
+
+  Future<void> _mostrarResetearPassword(
+      BuildContext context, UsuarioAdmin usuario) async {
+    final nuevoCtrl = TextEditingController();
+    bool enviando = false;
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: Text('Resetear contraseña\n${usuario.nombreCompleto}'),
+          content: TextField(
+            controller: nuevoCtrl,
+            decoration: const InputDecoration(
+                labelText: 'Nueva contraseña (mín. 6 caracteres)',
+                border: OutlineInputBorder()),
+            obscureText: true,
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancelar')),
+            ElevatedButton(
+              onPressed: enviando
+                  ? null
+                  : () async {
+                      if (nuevoCtrl.text.length < 6) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+                            content: Text('Mínimo 6 caracteres')));
+                        return;
+                      }
+                      setState(() => enviando = true);
+                      try {
+                        final apiClient = ref.read(apiClientProvider);
+                        final service =
+                            UsuarioAdminService(apiClient: apiClient);
+                        await service.resetearPassword(
+                            usuario.id, nuevoCtrl.text);
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Contraseña reseteada'),
+                                backgroundColor: Colors.green),
+                          );
+                        }
+                      } catch (e) {
+                        setState(() => enviando = false);
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: Colors.red));
+                        }
+                      }
+                    },
+              child: enviando
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Resetear'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -178,7 +247,23 @@ class _DetalleUsuarioScreenState extends ConsumerState<DetalleUsuarioScreen> {
             value: usuario.activo ? 'Activo' : 'Inactivo',
             valueColor: usuario.activo ? Colors.green : Colors.red,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: isLoading
+                  ? null
+                  : () => _mostrarResetearPassword(context, usuario),
+              icon: const Icon(Icons.lock_reset, color: Colors.orange),
+              label: const Text('Resetear contraseña',
+                  style: TextStyle(color: Colors.orange)),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.orange),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(

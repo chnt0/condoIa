@@ -3,6 +3,7 @@ package com.condos.usuario.controller;
 import com.condos.usuario.dto.BulkUsuarioResponse;
 import com.condos.usuario.dto.CreateUsuarioRequest;
 import com.condos.usuario.dto.ResidenteBasicoResponse;
+import com.condos.usuario.dto.ResetearPasswordRequest;
 import com.condos.usuario.dto.UpdateUsuarioRequest;
 import com.condos.usuario.dto.UsuarioResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
+    private final com.condos.usuario.repository.UsuarioRepository usuarioRepository;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
@@ -61,6 +65,18 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('GUARDIA', 'ADMIN', 'SUPERADMIN')")
     public ResponseEntity<List<ResidenteBasicoResponse>> listarResidentes() {
         return ResponseEntity.ok(usuarioService.listarResidentes());
+    }
+
+    @PutMapping("/{id}/resetear-password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    public ResponseEntity<Void> resetearPassword(
+            @PathVariable Long id,
+            @Valid @RequestBody ResetearPasswordRequest request) {
+        com.condos.usuario.model.Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new com.condos.common.exceptions.ResourceNotFoundException("Usuario no encontrado"));
+        usuario.setPasswordHash(passwordEncoder.encode(request.getNuevaPassword()));
+        usuarioRepository.save(usuario);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/bulk")
