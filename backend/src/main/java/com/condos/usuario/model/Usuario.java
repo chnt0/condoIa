@@ -36,6 +36,9 @@ public class Usuario {
     @Column(length = 20)
     private String telefono;
 
+    @Column(length = 20)
+    private String telefono2;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Rol rol;

@@ -98,6 +98,7 @@ public class UsuarioService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .nombreCompleto(request.getNombreCompleto())
                 .telefono(request.getTelefono())
+                .telefono2(request.getTelefono2())
                 .rol(request.getRol())
                 .condominio(condominio)
                 .unidadHabitacional(request.getUnidadHabitacional())
@@ -134,6 +135,7 @@ public class UsuarioService {
 
         usuario.setNombreCompleto(request.getNombreCompleto());
         usuario.setTelefono(request.getTelefono());
+        usuario.setTelefono2(request.getTelefono2());
         usuario.setRol(request.getRol());
         usuario.setUnidadHabitacional(request.getUnidadHabitacional());
         usuario.setEsPropietario(request.getEsPropietario());
@@ -264,6 +266,7 @@ public class UsuarioService {
                 .email(usuario.getEmail())
                 .nombreCompleto(usuario.getNombreCompleto())
                 .telefono(usuario.getTelefono())
+                .telefono2(usuario.getTelefono2())
                 .rol(usuario.getRol())
                 .condominioId(usuario.getCondominio() != null ? usuario.getCondominio().getId() : null)
                 .condominioNombre(usuario.getCondominio() != null ? usuario.getCondominio().getNombre() : null)

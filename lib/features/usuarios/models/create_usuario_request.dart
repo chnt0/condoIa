@@ -9,6 +9,7 @@ class CreateUsuarioRequest {
   final String password;
   final String nombreCompleto;
   final String? telefono;
+  final String? telefono2;
   final String rol;
   final String? unidadHabitacional;
   final bool esPropietario;
@@ -20,6 +21,7 @@ class CreateUsuarioRequest {
     required this.password,
     required this.nombreCompleto,
     this.telefono,
+    this.telefono2,
     required this.rol,
     this.unidadHabitacional,
     this.esPropietario = false,

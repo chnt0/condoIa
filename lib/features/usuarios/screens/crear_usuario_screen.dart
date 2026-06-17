@@ -16,6 +16,7 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _telefonoController = TextEditingController();
+  final _telefono2Controller = TextEditingController();
   final _unidadController = TextEditingController();
   bool _obscurePassword = true;
   String _selectedRol = 'USUARIO';
@@ -27,6 +28,7 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _telefonoController.dispose();
+    _telefono2Controller.dispose();
     _unidadController.dispose();
     super.dispose();
   }
@@ -43,6 +45,9 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
       telefono: _telefonoController.text.trim().isEmpty
           ? null
           : _telefonoController.text.trim(),
+      telefono2: _telefono2Controller.text.trim().isEmpty
+          ? null
+          : _telefono2Controller.text.trim(),
       rol: _selectedRol,
       unidadHabitacional: _unidadController.text.trim().isEmpty
           ? null
@@ -161,8 +166,19 @@ class _CrearUsuarioScreenState extends ConsumerState<CrearUsuarioScreen> {
               TextFormField(
                 controller: _telefonoController,
                 decoration: const InputDecoration(
-                  labelText: 'Teléfono',
+                  labelText: 'Teléfono 1',
                   prefixIcon: Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+                enabled: !isLoading,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _telefono2Controller,
+                decoration: const InputDecoration(
+                  labelText: 'Teléfono 2 (opcional)',
+                  prefixIcon: Icon(Icons.phone_outlined),
                 ),
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,

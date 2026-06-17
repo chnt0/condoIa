@@ -23,6 +23,7 @@ class UsuarioAdmin {
   final String email;
   final String nombreCompleto;
   final String? telefono;
+  final String? telefono2;
   final RolUsuario rol;
   final int? condominioId;
   final String? condominioNombre;
@@ -37,6 +38,7 @@ class UsuarioAdmin {
     required this.email,
     required this.nombreCompleto,
     this.telefono,
+    this.telefono2,
     required this.rol,
     this.condominioId,
     this.condominioNombre,

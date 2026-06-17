@@ -16,6 +16,7 @@ public class UpdateUsuarioRequest {
     private String nombreCompleto;
 
     private String telefono;
+    private String telefono2;
 
     @NotNull(message = "El rol es requerido")
     private Rol rol;

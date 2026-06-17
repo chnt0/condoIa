@@ -19,6 +19,7 @@ public class UsuarioResponse {
     private String email;
     private String nombreCompleto;
     private String telefono;
+    private String telefono2;
     private Rol rol;
     private Long condominioId;
     private String condominioNombre;
