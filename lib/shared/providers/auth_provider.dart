@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/api_constants.dart';
+import '../../core/services/firebase_service.dart';
 import '../models/usuario.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
@@ -94,6 +95,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final user = await _authService.login(username, password);
       state = AuthState(user: user, isLoading: false);
+      // Registrar token FCM para recibir push notifications
+      FirebaseService.registrarToken(_authService.apiClient);
     } catch (e) {
       state = AuthState(
         isLoading: false,
