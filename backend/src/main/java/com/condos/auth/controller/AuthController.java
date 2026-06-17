@@ -1,6 +1,7 @@
 package com.condos.auth.controller;
 
 import com.condos.auth.dto.CambiarPasswordRequest;
+import lombok.extern.slf4j.Slf4j;
 import com.condos.auth.dto.LoginRequest;
 import com.condos.auth.dto.LoginResponse;
 import com.condos.auth.dto.UserInfoResponse;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -52,6 +54,19 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(userInfo);
+    }
+
+    @DeleteMapping("/cuenta")
+    public ResponseEntity<Void> eliminarCuenta(Authentication authentication) {
+        Long userId = Long.parseLong(authentication.getName());
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Desactivar cuenta inmediatamente y marcar username para identificar la solicitud
+        usuario.setActivo(false);
+        usuario.setUsername("ELIMINADO_" + userId + "_" + usuario.getUsername());
+        usuarioRepository.save(usuario);
+        log.info("Solicitud de eliminación de cuenta: userId={}", userId);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/cambiar-password")

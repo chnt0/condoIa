@@ -10,6 +10,7 @@ class ApiConstants {
   static const String login = '$apiPrefix/auth/login';
   static const String me = '$apiPrefix/auth/me';
   static const String cambiarPassword = '$apiPrefix/auth/cambiar-password';
+  static const String eliminarCuenta = '$apiPrefix/auth/cuenta';
 
   // Visitas
   static const String visitas = '$apiPrefix/visitas';

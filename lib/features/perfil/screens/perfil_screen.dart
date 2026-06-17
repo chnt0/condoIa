@@ -6,6 +6,54 @@ import '../../../shared/services/auth_service.dart';
 class PerfilScreen extends ConsumerWidget {
   const PerfilScreen({super.key});
 
+  Future<void> _solicitarEliminarCuenta(
+      BuildContext context, WidgetRef ref) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Eliminar cuenta'),
+        content: const Text(
+          'Tu cuenta quedará desactivada inmediatamente y será eliminada permanentemente en un plazo de 30 días.\n\n'
+          '¿Estás seguro de que deseas continuar?',
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancelar')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Sí, eliminar mi cuenta'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && context.mounted) {
+      try {
+        final apiClient = ref.read(apiClientProvider);
+        await apiClient.delete(ApiConstants.eliminarCuenta);
+        if (context.mounted) {
+          await ref.read(authProvider.notifier).logout();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'Cuenta desactivada. Será eliminada en 30 días.'),
+                backgroundColor: Colors.orange),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Error: ${e.toString()}'),
+                backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+  }
+
   Future<void> _mostrarCambiarPassword(
       BuildContext context, WidgetRef ref) async {
     final actualCtrl = TextEditingController();
@@ -178,6 +226,18 @@ class PerfilScreen extends ConsumerWidget {
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () =>
+                    _solicitarEliminarCuenta(context, ref),
+                child: const Text(
+                  'Solicitar eliminación de cuenta',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
             ),
