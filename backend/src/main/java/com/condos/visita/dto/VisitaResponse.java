@@ -37,4 +37,8 @@ public class VisitaResponse {
     // Guardia que registró entrada (si aplica)
     private Long guardiaEntradaId;
     private String guardiaEntradaNombre;
+
+    // Campos para visitas directas
+    private String fotoVehiculo;
+    private String tipoVisita;
 }

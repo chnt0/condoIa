@@ -20,6 +20,7 @@ import '../../features/superadmin/screens/detalle_condominio_screen.dart';
 import '../../features/usuarios/screens/crear_usuario_screen.dart';
 import '../../features/usuarios/screens/detalle_usuario_screen.dart';
 import '../../features/visitas/screens/detalle_visita_screen.dart';
+import '../../features/visitas/screens/registrar_visita_directa_screen.dart';
 import '../../shared/providers/auth_provider.dart';
 import '../../shared/widgets/main_scaffold.dart';
 
@@ -50,6 +51,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: 'visitas/:id',
             builder: (context, state) => DetalleVisitaScreen(
                 visitaId: int.parse(state.pathParameters['id']!)),
+          ),
+          GoRoute(
+            path: 'visitas/directa',
+            builder: (_, __) => const RegistrarVisitaDirectaScreen(),
           ),
           // Usuarios
           GoRoute(

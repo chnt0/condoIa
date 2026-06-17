@@ -69,6 +69,12 @@ public class Visita {
     @Column(name = "notas", columnDefinition = "TEXT")
     private String notas;
 
+    @Column(name = "foto_vehiculo", columnDefinition = "TEXT")
+    private String fotoVehiculo;
+
+    @Column(name = "tipo_visita", length = 20)
+    private String tipoVisita = "PROGRAMADA";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

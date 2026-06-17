@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.condos.visita.dto.CreateVisitaDirectaRequest;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -236,6 +238,43 @@ public class VisitaService {
     }
 
     /**
+     * Registra una visita directa (sin QR) por el guardia en el momento.
+     */
+    @Transactional
+    public VisitaResponse registrarVisitaDirecta(CreateVisitaDirectaRequest request, Long guardiaId) {
+        Long condominioId = TenantContext.getCondominioId();
+        Condominio condominio = condominioRepository.findById(condominioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Condominio no encontrado"));
+
+        Usuario guardia = usuarioRepository.findById(guardiaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Guardia no encontrado"));
+
+        Usuario destinatario = usuarioRepository.findById(request.getUsuarioDestinatarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Residente destinatario no encontrado"));
+
+        Visita visita = Visita.builder()
+                .condominio(condominio)
+                .usuario(destinatario)
+                .nombreVisitante(request.getNombreVisitante())
+                .telefonoVisitante(request.getTelefonoVisitante())
+                .fechaHoraProgramada(LocalDateTime.now())
+                .codigoQrHash("DIRECTA-" + UUID.randomUUID())
+                .motivo(request.getMotivo())
+                .vehiculoPlacas(request.getVehiculoPlacas())
+                .fotoVehiculo(request.getFotoVehiculo())
+                .estado(EstadoVisita.COMPLETADA)
+                .fechaHoraEntrada(LocalDateTime.now())
+                .guardiaEntrada(guardia)
+                .tipoVisita("DIRECTA")
+                .build();
+
+        visita = visitaRepository.save(visita);
+        log.info("Visita directa registrada: id={}, visitante={}, guardia={}",
+                visita.getId(), visita.getNombreVisitante(), guardia.getUsername());
+        return toResponse(visita);
+    }
+
+    /**
      * Convierte entidad Visita a DTO Response.
      */
     private VisitaResponse toResponse(Visita visita) {
@@ -258,6 +297,8 @@ public class VisitaService {
                         visita.getGuardiaEntrada().getId() : null)
                 .guardiaEntradaNombre(visita.getGuardiaEntrada() != null ?
                         visita.getGuardiaEntrada().getNombreCompleto() : null)
+                .fotoVehiculo(visita.getFotoVehiculo())
+                .tipoVisita(visita.getTipoVisita())
                 .build();
     }
 }

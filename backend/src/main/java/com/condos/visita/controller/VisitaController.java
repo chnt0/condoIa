@@ -1,5 +1,6 @@
 package com.condos.visita.controller;
 
+import com.condos.visita.dto.CreateVisitaDirectaRequest;
 import com.condos.visita.dto.CreateVisitaRequest;
 import com.condos.visita.dto.ValidarQrRequest;
 import com.condos.visita.dto.ValidarQrResponse;
@@ -82,6 +83,18 @@ public class VisitaController {
         Long guardiaId = extractUsuarioId(authentication);
         ValidarQrResponse response = visitaService.validarQr(request, guardiaId);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Registrar visita directa (sin QR) — solo Guardia.
+     */
+    @PostMapping("/directa")
+    @PreAuthorize("hasRole('GUARDIA')")
+    public ResponseEntity<VisitaResponse> registrarVisitaDirecta(
+            @Valid @RequestBody CreateVisitaDirectaRequest request,
+            Authentication authentication) {
+        Long guardiaId = extractUsuarioId(authentication);
+        return ResponseEntity.ok(visitaService.registrarVisitaDirecta(request, guardiaId));
     }
 
     /**

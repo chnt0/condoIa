@@ -13,6 +13,7 @@ class ApiConstants {
   static const String visitas = '$apiPrefix/visitas';
   static const String misVisitas = '$apiPrefix/visitas/mis-visitas';
   static const String validarQr = '$apiPrefix/visitas/validar-qr';
+  static const String visitaDirecta = '$apiPrefix/visitas/directa';
 
   static String visitaById(int id) => '$apiPrefix/visitas/$id';
   static String cancelarVisita(int id) => '$apiPrefix/visitas/$id/cancelar';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../models/validar_qr_request.dart';
 import '../models/validar_qr_response.dart';
@@ -97,6 +98,11 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/home/visitas/directa'),
+        icon: const Icon(Icons.person_add),
+        label: const Text('Visita directa'),
+      ),
       appBar: AppBar(
         title: const Text('Validar QR'),
         actions: [
