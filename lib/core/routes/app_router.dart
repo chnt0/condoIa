@@ -48,13 +48,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           // Visitas
           GoRoute(
+            path: 'visitas/directa',
+            builder: (_, __) => const RegistrarVisitaDirectaScreen(),
+          ),
+          GoRoute(
             path: 'visitas/:id',
             builder: (context, state) => DetalleVisitaScreen(
                 visitaId: int.parse(state.pathParameters['id']!)),
-          ),
-          GoRoute(
-            path: 'visitas/directa',
-            builder: (_, __) => const RegistrarVisitaDirectaScreen(),
           ),
           // Usuarios
           GoRoute(
