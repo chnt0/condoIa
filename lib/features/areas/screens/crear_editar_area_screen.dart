@@ -45,7 +45,7 @@ class _CrearEditarAreaScreenState
         text: a?.anticipacionMinimaHoras.toString() ?? '');
     _anticipacionMaxCtrl = TextEditingController(
         text: a?.anticipacionMaximaDias.toString() ?? '');
-    _duracionBloque = a?.duracionBloqueMinutos ?? 60;
+    _duracionBloque = a?.duracionBloqueMinutos ?? 0;
     _activa = a?.activa ?? true;
 
     if (a != null) {
@@ -129,7 +129,8 @@ class _CrearEditarAreaScreenState
       TextFormField(
         controller: ctrl,
         decoration: InputDecoration(
-            labelText: '$label *', border: const OutlineInputBorder()),
+            labelText: min == 0 ? label : '$label *',
+            border: const OutlineInputBorder()),
         keyboardType: TextInputType.number,
         validator: (v) {
           if (v == null || v.trim().isEmpty) return 'Campo requerido';
@@ -197,12 +198,16 @@ class _CrearEditarAreaScreenState
                 value: _duracionBloque,
                 decoration: const InputDecoration(
                     labelText: 'Duración de bloque',
-                    border: OutlineInputBorder()),
+                    border: OutlineInputBorder(),
+                    helperText: 'Sin bloque = reserva todo el horario del día'),
                 items: const [
+                  DropdownMenuItem(value: 0, child: Text('Todo el día (sin división)')),
                   DropdownMenuItem(value: 30, child: Text('30 minutos')),
                   DropdownMenuItem(value: 60, child: Text('60 minutos')),
                   DropdownMenuItem(value: 90, child: Text('90 minutos')),
                   DropdownMenuItem(value: 120, child: Text('120 minutos')),
+                  DropdownMenuItem(value: 180, child: Text('3 horas')),
+                  DropdownMenuItem(value: 240, child: Text('4 horas')),
                 ],
                 onChanged: (v) => setState(() => _duracionBloque = v!),
               ),
@@ -210,11 +215,12 @@ class _CrearEditarAreaScreenState
               _numField(_maxReservasCtrl, 'Máx. reservas/mes por usuario'),
               const SizedBox(height: 12),
               _numField(_anticipacionMinCtrl,
-                  'Anticipación mínima (horas)',
+                  'Anticipación mínima (horas) — 0 = sin restricción',
                   min: 0),
               const SizedBox(height: 12),
               _numField(_anticipacionMaxCtrl,
-                  'Anticipación máxima (días)'),
+                  'Anticipación máxima (días) — 0 = sin restricción',
+                  min: 0),
               const SizedBox(height: 12),
               SwitchListTile(
                 title: const Text('Área activa'),

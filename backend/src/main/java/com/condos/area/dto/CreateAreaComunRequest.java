@@ -24,8 +24,8 @@ public class CreateAreaComunRequest {
     private String horarioFin;
 
     @NotNull
-    @Min(15)
-    private Integer duracionBloqueMinutos;
+    @Min(0)
+    private Integer duracionBloqueMinutos;  // 0 = todo el día (un solo bloque)
 
     @NotNull
     @Min(1)
@@ -33,11 +33,11 @@ public class CreateAreaComunRequest {
 
     @NotNull
     @Min(0)
-    private Integer anticipacionMinimaHoras;
+    private Integer anticipacionMinimaHoras;  // 0 = sin restricción mínima
 
     @NotNull
-    @Min(1)
-    private Integer anticipacionMaximaDias;
+    @Min(0)
+    private Integer anticipacionMaximaDias;   // 0 = sin restricción máxima
 
     private boolean activa = true;
 }

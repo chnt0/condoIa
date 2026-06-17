@@ -57,12 +57,14 @@ public class ReservacionService {
         LocalDateTime fin = inicio.plusMinutes(area.getDuracionBloqueMinutos());
         LocalDateTime ahora = LocalDateTime.now();
 
-        if (inicio.isBefore(ahora.plusHours(area.getAnticipacionMinimaHoras()))) {
+        if (area.getAnticipacionMinimaHoras() > 0 &&
+                inicio.isBefore(ahora.plusHours(area.getAnticipacionMinimaHoras()))) {
             throw new IllegalArgumentException(
                     "La reservación debe hacerse con al menos " + area.getAnticipacionMinimaHoras() + " horas de anticipación");
         }
 
-        if (inicio.isAfter(ahora.plusDays(area.getAnticipacionMaximaDias()))) {
+        if (area.getAnticipacionMaximaDias() > 0 &&
+                inicio.isAfter(ahora.plusDays(area.getAnticipacionMaximaDias()))) {
             throw new IllegalArgumentException(
                     "La reservación no puede hacerse con más de " + area.getAnticipacionMaximaDias() + " días de anticipación");
         }

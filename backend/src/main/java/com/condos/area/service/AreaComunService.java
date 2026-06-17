@@ -103,9 +103,24 @@ public class AreaComunService {
         LocalDateTime ahora = LocalDateTime.now();
         List<BloqueDisponibilidadResponse> bloques = new ArrayList<>();
 
-        LocalDateTime bloque = LocalDateTime.of(fecha, area.getHorarioInicio());
+        LocalDateTime inicio = LocalDateTime.of(fecha, area.getHorarioInicio());
         LocalDateTime fin = LocalDateTime.of(fecha, area.getHorarioFin());
 
+        // Sin duración de bloque = todo el día es un solo bloque
+        if (area.getDuracionBloqueMinutos() == 0) {
+            if (inicio.isAfter(ahora)) {
+                boolean ocupado = reservacionRepository.existsByAreaComunIdAndFechaHoraInicioAndEstado(
+                        areaId, inicio, EstadoReservacion.ACTIVA);
+                bloques.add(BloqueDisponibilidadResponse.builder()
+                        .fechaHoraInicio(inicio)
+                        .fechaHoraFin(fin)
+                        .disponible(!ocupado)
+                        .build());
+            }
+            return bloques;
+        }
+
+        LocalDateTime bloque = inicio;
         while (bloque.isBefore(fin)) {
             LocalDateTime bloqueHoraFin = bloque.plusMinutes(area.getDuracionBloqueMinutos());
             if (bloqueHoraFin.isAfter(fin)) break;
