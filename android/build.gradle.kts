@@ -15,6 +15,17 @@ allprojects {
     }
 }
 
+// Forzar compileSdk mínimo 36 en todos los plugins
+subprojects {
+    afterEvaluate {
+        extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
+            if (compileSdkVersion?.removePrefix("android-")?.toIntOrNull() ?: 0 < 36) {
+                compileSdkVersion(36)
+            }
+        }
+    }
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
