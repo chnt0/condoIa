@@ -68,6 +68,8 @@ class ApiConstants {
 
   // Cuotas / Pagos
   static const String cuotas = '$apiPrefix/cuotas';
+  static const String cuotaReporte = '$apiPrefix/cuotas/reporte';
+  static const String morosidad = '$apiPrefix/cuotas/morosidad';
   static const String misCuotas = '$apiPrefix/cuotas/mis-cuotas';
   static String cuotaDetalle(int id) => '$apiPrefix/cuotas/$id/detalle';
   static String reportarPago(int cuotaUsuarioId) => '$apiPrefix/cuotas/$cuotaUsuarioId/reportar';

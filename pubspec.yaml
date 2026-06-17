@@ -57,6 +57,10 @@ dependencies:
   # Image picker para foto de comprobante de pago
   image_picker: ^1.1.2
 
+  # Compartir archivos CSV en móvil
+  share_plus: ^10.0.0
+  path_provider: ^2.1.5
+
   # Firebase push notifications
   firebase_core: ^3.6.0
   firebase_messaging: ^15.1.3
