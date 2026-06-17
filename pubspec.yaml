@@ -54,6 +54,9 @@ dependencies:
   # File picker para carga masiva de usuarios
   file_picker: ^8.0.0
 
+  # Image picker para foto de comprobante de pago
+  image_picker: ^1.1.2
+
   # Utilities
   equatable: ^2.0.5
   json_annotation: ^4.8.1

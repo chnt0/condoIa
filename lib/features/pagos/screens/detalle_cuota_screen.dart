@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/confirmar_pago_request.dart';
@@ -31,6 +33,30 @@ class _DetalleCuotaScreenState extends ConsumerState<DetalleCuotaScreen> {
       _registros = registros;
       _loading = false;
     });
+  }
+
+  void _verFotoCompleta(BuildContext context, String base64) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              title: const Text('Comprobante'),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.pop(ctx),
+              ),
+              automaticallyImplyLeading: false,
+            ),
+            InteractiveViewer(
+              child: Image.memory(base64Decode(base64)),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _confirmar(int cuotaUsuarioId) async {
@@ -142,6 +168,25 @@ class _DetalleCuotaScreenState extends ConsumerState<DetalleCuotaScreen> {
                               Text('Ref: ${r.referenciaPago}'),
                             if (r.notasUsuario != null)
                               Text('Nota usuario: ${r.notasUsuario}'),
+                            if (r.comprobanteFoto != null) ...[
+                              const SizedBox(height: 6),
+                              GestureDetector(
+                                onTap: () => _verFotoCompleta(
+                                    context, r.comprobanteFoto!),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Image.memory(
+                                    base64Decode(r.comprobanteFoto!),
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text('Toca la imagen para ampliar',
+                                  style: TextStyle(
+                                      fontSize: 10, color: Colors.grey)),
+                            ],
                             if (r.notasAdmin != null)
                               Text('Nota admin: ${r.notasAdmin}',
                                   style: const TextStyle(color: Colors.red)),

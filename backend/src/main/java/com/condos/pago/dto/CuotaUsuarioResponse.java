@@ -22,6 +22,7 @@ public class CuotaUsuarioResponse {
     private EstadoPago estado;
     private String referenciaPago;
     private String notasUsuario;
+    private String comprobanteFoto;
     private String notasAdmin;
     private LocalDateTime fechaReporte;
     private LocalDateTime fechaConfirmacion;

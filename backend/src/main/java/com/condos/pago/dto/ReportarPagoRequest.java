@@ -10,4 +10,6 @@ public class ReportarPagoRequest {
     private String referenciaPago;
 
     private String notasUsuario;
+
+    private String comprobanteFoto;
 }

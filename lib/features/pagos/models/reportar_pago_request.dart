@@ -6,8 +6,13 @@ part 'reportar_pago_request.g.dart';
 class ReportarPagoRequest {
   final String referenciaPago;
   final String? notasUsuario;
+  final String? comprobanteFoto;
 
-  ReportarPagoRequest({required this.referenciaPago, this.notasUsuario});
+  ReportarPagoRequest({
+    required this.referenciaPago,
+    this.notasUsuario,
+    this.comprobanteFoto,
+  });
 
   factory ReportarPagoRequest.fromJson(Map<String, dynamic> json) =>
       _$ReportarPagoRequestFromJson(json);

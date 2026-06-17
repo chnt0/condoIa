@@ -16,6 +16,7 @@ CuotaUsuarioResponse _$CuotaUsuarioResponseFromJson(
       estado: $enumDecode(_$EstadoPagoEnumMap, json['estado']),
       referenciaPago: json['referenciaPago'] as String?,
       notasUsuario: json['notasUsuario'] as String?,
+      comprobanteFoto: json['comprobanteFoto'] as String?,
       notasAdmin: json['notasAdmin'] as String?,
       fechaReporte: json['fechaReporte'] == null
           ? null
@@ -39,6 +40,7 @@ Map<String, dynamic> _$CuotaUsuarioResponseToJson(
       'estado': _$EstadoPagoEnumMap[instance.estado]!,
       'referenciaPago': instance.referenciaPago,
       'notasUsuario': instance.notasUsuario,
+      'comprobanteFoto': instance.comprobanteFoto,
       'notasAdmin': instance.notasAdmin,
       'fechaReporte': instance.fechaReporte?.toIso8601String(),
       'fechaConfirmacion': instance.fechaConfirmacion?.toIso8601String(),

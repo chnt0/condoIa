@@ -44,6 +44,9 @@ public class CuotaUsuario {
     @Column(name = "notas_usuario", columnDefinition = "TEXT")
     private String notasUsuario;
 
+    @Column(name = "comprobante_foto", columnDefinition = "TEXT")
+    private String comprobanteFoto;
+
     @Column(name = "notas_admin", columnDefinition = "TEXT")
     private String notasAdmin;
 

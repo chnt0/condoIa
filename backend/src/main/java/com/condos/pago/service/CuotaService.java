@@ -115,6 +115,7 @@ public class CuotaService {
         cu.setEstado(EstadoPago.REPORTADO);
         cu.setReferenciaPago(request.getReferenciaPago());
         cu.setNotasUsuario(request.getNotasUsuario());
+        cu.setComprobanteFoto(request.getComprobanteFoto());
         cu.setFechaReporte(LocalDateTime.now());
 
         cu = cuotaUsuarioRepository.save(cu);
@@ -181,6 +182,7 @@ public class CuotaService {
                 .estado(cu.getEstado())
                 .referenciaPago(cu.getReferenciaPago())
                 .notasUsuario(cu.getNotasUsuario())
+                .comprobanteFoto(cu.getComprobanteFoto())
                 .notasAdmin(cu.getNotasAdmin())
                 .fechaReporte(cu.getFechaReporte())
                 .fechaConfirmacion(cu.getFechaConfirmacion())

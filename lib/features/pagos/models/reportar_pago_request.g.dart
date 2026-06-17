@@ -7,6 +7,7 @@ ReportarPagoRequest _$ReportarPagoRequestFromJson(
     ReportarPagoRequest(
       referenciaPago: json['referenciaPago'] as String,
       notasUsuario: json['notasUsuario'] as String?,
+      comprobanteFoto: json['comprobanteFoto'] as String?,
     );
 
 Map<String, dynamic> _$ReportarPagoRequestToJson(
@@ -14,4 +15,5 @@ Map<String, dynamic> _$ReportarPagoRequestToJson(
     <String, dynamic>{
       'referenciaPago': instance.referenciaPago,
       'notasUsuario': instance.notasUsuario,
+      'comprobanteFoto': instance.comprobanteFoto,
     };

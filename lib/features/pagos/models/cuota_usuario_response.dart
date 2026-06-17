@@ -29,6 +29,7 @@ class CuotaUsuarioResponse {
   final EstadoPago estado;
   final String? referenciaPago;
   final String? notasUsuario;
+  final String? comprobanteFoto;
   final String? notasAdmin;
   final DateTime? fechaReporte;
   final DateTime? fechaConfirmacion;
@@ -45,6 +46,7 @@ class CuotaUsuarioResponse {
     required this.estado,
     this.referenciaPago,
     this.notasUsuario,
+    this.comprobanteFoto,
     this.notasAdmin,
     this.fechaReporte,
     this.fechaConfirmacion,

@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../models/cuota_usuario_response.dart';
 import '../models/reportar_pago_request.dart';
 import '../providers/cuota_provider.dart';
@@ -18,6 +23,8 @@ class _ReportarPagoScreenState extends ConsumerState<ReportarPagoScreen> {
   final _formKey = GlobalKey<FormState>();
   final _referenciaCtrl = TextEditingController();
   final _notasCtrl = TextEditingController();
+  Uint8List? _fotoBytes;
+  String? _fotoBase64;
 
   CuotaUsuarioResponse? _cuota;
 
@@ -37,12 +44,59 @@ class _ReportarPagoScreenState extends ConsumerState<ReportarPagoScreen> {
     super.dispose();
   }
 
+  Future<void> _seleccionarFoto() async {
+    final picker = ImagePicker();
+    final fuente = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Tomar foto'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Elegir de galería'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (fuente == null) return;
+
+    final imagen = await picker.pickImage(
+      source: fuente,
+      imageQuality: 70,
+      maxWidth: 1200,
+    );
+    if (imagen == null) return;
+
+    final bytes = await imagen.readAsBytes();
+    setState(() {
+      _fotoBytes = bytes;
+      _fotoBase64 = base64Encode(bytes);
+    });
+  }
+
+  void _eliminarFoto() {
+    setState(() {
+      _fotoBytes = null;
+      _fotoBase64 = null;
+    });
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     final request = ReportarPagoRequest(
       referenciaPago: _referenciaCtrl.text.trim(),
       notasUsuario:
           _notasCtrl.text.trim().isEmpty ? null : _notasCtrl.text.trim(),
+      comprobanteFoto: _fotoBase64,
     );
     await ref
         .read(cuotaProvider.notifier)
@@ -117,6 +171,39 @@ class _ReportarPagoScreenState extends ConsumerState<ReportarPagoScreen> {
                 ),
                 maxLines: 3,
               ),
+              const SizedBox(height: 20),
+
+              // Foto del comprobante
+              const Text('Foto del comprobante',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              if (_fotoBytes != null) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.memory(
+                    _fotoBytes!,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  onPressed: _eliminarFoto,
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  label: const Text('Eliminar foto',
+                      style: TextStyle(color: Colors.red)),
+                ),
+              ] else
+                OutlinedButton.icon(
+                  onPressed: _seleccionarFoto,
+                  icon: const Icon(Icons.add_a_photo),
+                  label: const Text('Adjuntar comprobante (opcional)'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    minimumSize: const Size(double.infinity, 0),
+                  ),
+                ),
+
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: state.isLoading ? null : _submit,
