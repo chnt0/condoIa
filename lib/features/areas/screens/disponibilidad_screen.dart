@@ -50,12 +50,31 @@ class _DisponibilidadScreenState extends ConsumerState<DisponibilidadScreen> {
 
   Future<void> _seleccionarFecha() async {
     final ahora = DateTime.now();
-    final maxDias = _area?.anticipacionMaximaDias ?? 30;
+    final today = DateTime(ahora.year, ahora.month, ahora.day);
+
+    // 0 = sin restricción de anticipación máxima → permitir hasta 1 año
+    final maxDias = (_area?.anticipacionMaximaDias ?? 0) > 0
+        ? _area!.anticipacionMaximaDias
+        : 365;
+
+    // firstDate: hoy (no bloquear días pasados en el picker)
+    final firstDate = today;
+
+    // lastDate: máximo de días permitidos
+    final lastDate = today.add(Duration(days: maxDias));
+
+    // initialDate debe estar dentro del rango
+    final initialDate = _fechaSeleccionada.isBefore(firstDate)
+        ? firstDate
+        : _fechaSeleccionada.isAfter(lastDate)
+            ? lastDate
+            : _fechaSeleccionada;
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _fechaSeleccionada,
-      firstDate: ahora,
-      lastDate: ahora.add(Duration(days: maxDias)),
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
     if (picked != null) {
       setState(() => _fechaSeleccionada = picked);
