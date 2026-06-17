@@ -72,3 +72,6 @@ flutter_macos_arm64_3.44.0-stable.zip
 # Firebase service account key
 *firebase-adminsdk*.json
 *service-account*.json
+# Firma Android
+android/key.properties
+*.keystore
