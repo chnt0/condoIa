@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../shared/providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -14,6 +15,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _recordarUsuario = false;
+
+  static const _keyUsername = 'saved_username';
+  static const _keyRecordar = 'recordar_usuario';
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarUsuarioGuardado();
+  }
+
+  Future<void> _cargarUsuarioGuardado() async {
+    final prefs = await SharedPreferences.getInstance();
+    final recordar = prefs.getBool(_keyRecordar) ?? false;
+    if (recordar) {
+      final username = prefs.getString(_keyUsername) ?? '';
+      setState(() {
+        _recordarUsuario = true;
+        _usernameController.text = username;
+      });
+    }
+  }
+
+  Future<void> _guardarPreferencia(String username) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_recordarUsuario) {
+      await prefs.setString(_keyUsername, username);
+      await prefs.setBool(_keyRecordar, true);
+    } else {
+      await prefs.remove(_keyUsername);
+      await prefs.setBool(_keyRecordar, false);
+    }
+  }
 
   @override
   void dispose() {
@@ -23,16 +57,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
+
+    final username = _usernameController.text.trim();
+    await _guardarPreferencia(username);
 
     try {
       await ref.read(authProvider.notifier).login(
-            _usernameController.text.trim(),
+            username,
             _passwordController.text,
           );
-      // Navigation will be handled automatically by GoRouter
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -43,23 +77,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
       }
     }
-  }
-
-  String? _validateUsername(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Por favor ingrese su usuario';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor ingrese su contraseña';
-    }
-    if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
-    }
-    return null;
   }
 
   @override
@@ -86,17 +103,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Text(
                     'CondoApp',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Gestión de Condominios',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[600],
-                        ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 48),
                   TextFormField(
@@ -106,7 +125,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       prefixIcon: Icon(Icons.person),
                       border: OutlineInputBorder(),
                     ),
-                    validator: _validateUsername,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Por favor ingrese su usuario'
+                        : null,
                     textInputAction: TextInputAction.next,
                     enabled: !authState.isLoading,
                   ),
@@ -118,25 +139,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock),
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
+                        icon: Icon(_obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword),
                       ),
                     ),
                     obscureText: _obscurePassword,
-                    validator: _validatePassword,
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return 'Por favor ingrese su contraseña';
+                      }
+                      if (v.length < 6) {
+                        return 'Mínimo 6 caracteres';
+                      }
+                      return null;
+                    },
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _handleLogin(),
                     enabled: !authState.isLoading,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
+                  // Checkbox "Recordar usuario"
+                  CheckboxListTile(
+                    value: _recordarUsuario,
+                    onChanged: authState.isLoading
+                        ? null
+                        : (v) => setState(() => _recordarUsuario = v!),
+                    title: const Text('Recordar usuario',
+                        style: TextStyle(fontSize: 14)),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: authState.isLoading ? null : _handleLogin,
                     style: ElevatedButton.styleFrom(
@@ -146,14 +183,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Iniciar Sesión',
-                            style: TextStyle(fontSize: 16),
-                          ),
+                            child:
+                                CircularProgressIndicator(strokeWidth: 2))
+                        : const Text('Iniciar Sesión',
+                            style: TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
