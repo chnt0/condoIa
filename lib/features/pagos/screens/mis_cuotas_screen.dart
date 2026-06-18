@@ -65,19 +65,35 @@ class _CuotaUsuarioTile extends StatelessWidget {
 
   const _CuotaUsuarioTile({required this.cuota});
 
-  Color _estadoColor(EstadoPago estado) => switch (estado) {
-        EstadoPago.pendiente => Colors.grey,
-        EstadoPago.reportado => Colors.orange,
-        EstadoPago.confirmado => Colors.green,
-        EstadoPago.rechazado => Colors.red,
-      };
+  bool _esVencida() {
+    if (cuota.estado != EstadoPago.pendiente) return false;
+    try {
+      final venc = DateTime.parse(cuota.fechaVencimiento);
+      return venc.isBefore(DateTime.now());
+    } catch (_) {
+      return false;
+    }
+  }
 
-  String _estadoLabel(EstadoPago estado) => switch (estado) {
-        EstadoPago.pendiente => 'PENDIENTE',
-        EstadoPago.reportado => 'REPORTADO',
-        EstadoPago.confirmado => 'CONFIRMADO',
-        EstadoPago.rechazado => 'RECHAZADO',
-      };
+  Color _estadoColor(EstadoPago estado) {
+    if (estado == EstadoPago.pendiente && _esVencida()) return Colors.red;
+    return switch (estado) {
+      EstadoPago.pendiente => Colors.grey,
+      EstadoPago.reportado => Colors.orange,
+      EstadoPago.confirmado => Colors.green,
+      EstadoPago.rechazado => Colors.red,
+    };
+  }
+
+  String _estadoLabel(EstadoPago estado) {
+    if (estado == EstadoPago.pendiente && _esVencida()) return 'VENCIDO';
+    return switch (estado) {
+      EstadoPago.pendiente => 'PENDIENTE',
+      EstadoPago.reportado => 'REPORTADO',
+      EstadoPago.confirmado => 'CONFIRMADO',
+      EstadoPago.rechazado => 'RECHAZADO',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {

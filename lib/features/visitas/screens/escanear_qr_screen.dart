@@ -14,7 +14,7 @@ class EscanearQrScreen extends ConsumerStatefulWidget {
 }
 
 class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
-  bool _usarCamara = true;
+  bool _usarCamara = false; // Mostrar manual primero
   bool _procesando = false;
   bool _dialogOpen = false;
   final TextEditingController _codigoController = TextEditingController();
@@ -91,7 +91,7 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
 
     if (mounted) {
       setState(() => _dialogOpen = false);
-      if (_usarCamara) _scannerController.start();
+      // Inicia con manual — no arrancar cámara automáticamente
     }
   }
 

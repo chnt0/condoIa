@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../shared/providers/auth_provider.dart';
-import '../models/visita.dart';
-import '../providers/visita_provider.dart';
+import '../../incidentes/models/incidente.dart';
+import '../../incidentes/providers/incidente_provider.dart';
 
 class DashboardAdminScreen extends ConsumerStatefulWidget {
   const DashboardAdminScreen({super.key});
@@ -20,7 +20,10 @@ class _DashboardAdminScreenState extends ConsumerState<DashboardAdminScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _cargarMorosidad());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cargarMorosidad();
+      ref.read(incidenteProvider.notifier).cargarIncidentes();
+    });
   }
 
   Future<void> _cargarMorosidad() async {
@@ -39,23 +42,22 @@ class _DashboardAdminScreenState extends ConsumerState<DashboardAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final visitaState = ref.watch(visitaProvider);
-    final visitas = visitaState.todasVisitas;
-    final now = DateTime.now();
+    final incState = ref.watch(incidenteProvider);
+    final incidentes = incState.incidentes
+        .where((i) => i.estado != EstadoIncidente.cancelado)
+        .toList();
 
-    final hoy = visitas
-        .where((v) =>
-            v.fechaHoraProgramada.year == now.year &&
-            v.fechaHoraProgramada.month == now.month &&
-            v.fechaHoraProgramada.day == now.day)
+    final pendientes =
+        incidentes.where((i) => i.estado == EstadoIncidente.pendiente).length;
+    final enProceso =
+        incidentes.where((i) => i.estado == EstadoIncidente.enProceso).length;
+    final resueltos =
+        incidentes.where((i) => i.estado == EstadoIncidente.resuelto).length;
+    final alta = incidentes
+        .where((i) =>
+            i.prioridad == PrioridadIncidente.alta &&
+            i.estado != EstadoIncidente.resuelto)
         .length;
-
-    final programadas =
-        visitas.where((v) => v.estado == EstadoVisita.programada).length;
-    final completadas =
-        visitas.where((v) => v.estado == EstadoVisita.completada).length;
-    final canceladas =
-        visitas.where((v) => v.estado == EstadoVisita.cancelada).length;
 
     final totalMonto =
         (_morosidad?['totalMonto'] as num?)?.toDouble() ?? 0.0;
@@ -69,17 +71,55 @@ class _DashboardAdminScreenState extends ConsumerState<DashboardAdminScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              ref.read(visitaProvider.notifier).cargarTodasVisitas();
               _cargarMorosidad();
+              ref.read(incidenteProvider.notifier).cargarIncidentes();
             },
           ),
         ],
       ),
-      body: visitaState.isLoading && visitas.isEmpty
+      body: incState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                // Incidentes
+                const Text('Incidentes',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _StatCard(
+                        title: 'Pendientes',
+                        value: '$pendientes',
+                        icon: Icons.pending_outlined,
+                        color: Colors.orange),
+                    const SizedBox(width: 8),
+                    _StatCard(
+                        title: 'En proceso',
+                        value: '$enProceso',
+                        icon: Icons.autorenew,
+                        color: Colors.blue),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _StatCard(
+                        title: 'Resueltos',
+                        value: '$resueltos',
+                        icon: Icons.check_circle_outline,
+                        color: Colors.green),
+                    const SizedBox(width: 8),
+                    _StatCard(
+                        title: 'Prioridad alta',
+                        value: '$alta',
+                        icon: Icons.priority_high,
+                        color: Colors.red),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
                 // Morosidad
                 const Text('Morosidad',
                     style: TextStyle(
@@ -90,69 +130,25 @@ class _DashboardAdminScreenState extends ConsumerState<DashboardAdminScreen> {
                     : Row(
                         children: [
                           _StatCard(
-                            title: 'Total vencido',
-                            value: '\$${totalMonto.toStringAsFixed(0)}',
-                            icon: Icons.money_off,
-                            color: Colors.red,
-                          ),
+                              title: 'Total vencido',
+                              value:
+                                  '\$${totalMonto.toStringAsFixed(0)}',
+                              icon: Icons.money_off,
+                              color: Colors.red),
                           const SizedBox(width: 8),
                           _StatCard(
-                            title: 'Morosos',
-                            value: '$totalMorosos',
-                            icon: Icons.person_off_outlined,
-                            color: Colors.orange,
-                          ),
+                              title: 'Morosos',
+                              value: '$totalMorosos',
+                              icon: Icons.person_off_outlined,
+                              color: Colors.orange),
                           const SizedBox(width: 8),
                           _StatCard(
-                            title: 'Cuotas venc.',
-                            value: '$cuotasVencidas',
-                            icon: Icons.receipt_long,
-                            color: Colors.deepOrange,
-                          ),
+                              title: 'Cuotas venc.',
+                              value: '$cuotasVencidas',
+                              icon: Icons.receipt_long,
+                              color: Colors.deepOrange),
                         ],
                       ),
-                const SizedBox(height: 24),
-
-                // Visitas
-                const Text('Resumen de visitas',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 8),
-                GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _StatCard(
-                        title: 'Hoy',
-                        value: '$hoy',
-                        icon: Icons.today,
-                        color: Colors.indigo),
-                    _StatCard(
-                        title: 'Programadas',
-                        value: '$programadas',
-                        icon: Icons.schedule,
-                        color: Colors.blue),
-                    _StatCard(
-                        title: 'Completadas',
-                        value: '$completadas',
-                        icon: Icons.check_circle_outline,
-                        color: Colors.green),
-                    _StatCard(
-                        title: 'Canceladas',
-                        value: '$canceladas',
-                        icon: Icons.cancel_outlined,
-                        color: Colors.red),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Total registradas: ${visitas.length}',
-                  style: const TextStyle(color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
               ],
             ),
     );
@@ -178,27 +174,22 @@ class _StatCard extends StatelessWidget {
       child: Card(
         elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, color: color, size: 28),
               const SizedBox(height: 6),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
+              Text(value,
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: color)),
               const SizedBox(height: 4),
-              Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 11, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
+              Text(title,
+                  style: const TextStyle(
+                      fontSize: 11, color: Colors.grey),
+                  textAlign: TextAlign.center),
             ],
           ),
         ),
