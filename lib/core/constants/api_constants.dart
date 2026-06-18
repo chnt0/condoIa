@@ -76,7 +76,7 @@ class ApiConstants {
   static String reportarPago(int cuotaUsuarioId) => '$apiPrefix/cuotas/$cuotaUsuarioId/reportar';
   static String confirmarPago(int cuotaUsuarioId) => '$apiPrefix/cuotas/$cuotaUsuarioId/confirmar';
 
-  static const Duration connectionTimeout = Duration(seconds: 30);
-  static const Duration receiveTimeout = Duration(seconds: 30);
-  static const Duration defaultTimeout = Duration(seconds: 30);
+  static const Duration connectionTimeout = Duration(seconds: 90);
+  static const Duration receiveTimeout = Duration(seconds: 90);
+  static const Duration defaultTimeout = Duration(seconds: 90);
 }
