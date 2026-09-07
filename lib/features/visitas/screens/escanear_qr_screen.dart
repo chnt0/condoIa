@@ -131,6 +131,7 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
       children: [
         MobileScanner(
           controller: _scannerController,
+          errorBuilder: (context, error, child) => _buildScannerError(error),
           onDetect: (capture) {
             final barcodes = capture.barcodes;
             final code = barcodes.isEmpty ? null : barcodes.first.rawValue;
@@ -163,6 +164,49 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  String _mensajeError(MobileScannerException error) {
+    switch (error.errorCode) {
+      case MobileScannerErrorCode.permissionDenied:
+        return 'Permiso de cámara denegado. Actívalo en los ajustes del navegador o del dispositivo.';
+      case MobileScannerErrorCode.unsupported:
+        return 'Este dispositivo o navegador no soporta el escaneo de cámara. Usa la opción manual.';
+      default:
+        return 'No se pudo iniciar la cámara. Verifica los permisos e intenta de nuevo, o usa la opción manual.';
+    }
+  }
+
+  Widget _buildScannerError(MobileScannerException error) {
+    return ColoredBox(
+      color: Colors.black,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.videocam_off, color: Colors.white, size: 40),
+              const SizedBox(height: 16),
+              Text(
+                _mensajeError(error),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () => setState(() {
+                  _usarCamara = false;
+                  _scannerController.stop();
+                }),
+                icon: const Icon(Icons.keyboard, color: Colors.white),
+                label: const Text('Usar entrada manual', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
