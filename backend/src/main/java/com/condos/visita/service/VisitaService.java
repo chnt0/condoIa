@@ -70,6 +70,7 @@ public class VisitaService {
                 .motivo(request.getMotivo())
                 .vehiculoPlacas(request.getVehiculoPlacas())
                 .estado(EstadoVisita.PROGRAMADA)
+                .tipoVisita(EstadoVisita.PROGRAMADA.toString())
                 .codigoQrHash(UUID.randomUUID().toString())
                 .build();
 
