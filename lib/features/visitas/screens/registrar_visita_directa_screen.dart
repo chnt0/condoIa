@@ -244,19 +244,76 @@ class _RegistrarVisitaDirectaScreenState
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.person),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Icon(Icons.person),
+                      ),
                       const SizedBox(width: 8),
+
                       Expanded(
-                        child: Text(
-                          '${_destinatario!.unidadHabitacional ?? ""} — ${_destinatario!.nombreCompleto} \n ${_destinatario!.telefono ?? ""} - ${_destinatario!.telefono2 ?? ""}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Unidad + nombre
+                            Text(
+                              '${_destinatario!.unidadHabitacional ?? ""} — '
+                              '${_destinatario!.nombreCompleto}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            // Teléfono 1
+                            if (_destinatario!.telefono != null &&
+                                _destinatario!.telefono!.trim().isNotEmpty)
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.phone,
+                                    size: 15,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    _destinatario!.telefono!,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                            // Teléfono 2
+                            if (_destinatario!.telefono2 != null &&
+                                _destinatario!.telefono2!.trim().isNotEmpty)
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.phone,
+                                    size: 15,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    _destinatario!.telefono2!,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
                         ),
                       ),
+
                       IconButton(
                         icon: const Icon(Icons.close),
-                        onPressed: () =>
-                            setState(() => _destinatario = null),
+                        onPressed: () {
+                          setState(() => _destinatario = null);
+                        },
                       ),
                     ],
                   ),
