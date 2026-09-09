@@ -177,6 +177,8 @@ public class UsuarioService {
                         .id(u.getId())
                         .nombreCompleto(u.getNombreCompleto())
                         .unidadHabitacional(u.getUnidadHabitacional())
+                        .telefono(u.getTelefono())
+                        .telefono2(u.getTelefono2())
                         .build())
                 .collect(Collectors.toList());
     }

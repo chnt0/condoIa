@@ -9,4 +9,6 @@ public class ResidenteBasicoResponse {
     private Long id;
     private String nombreCompleto;
     private String unidadHabitacional;
+    private String telefono;
+    private String telefono2;
 }
