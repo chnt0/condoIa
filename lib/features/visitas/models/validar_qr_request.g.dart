@@ -13,7 +13,4 @@ ValidarQrRequest _$ValidarQrRequestFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ValidarQrRequestToJson(ValidarQrRequest instance) =>
-    <String, dynamic>{
-      'codigoQr': instance.codigoQr,
-      'notas': instance.notas,
-    };
+    <String, dynamic>{'codigoQr': instance.codigoQr, 'notas': instance.notas};

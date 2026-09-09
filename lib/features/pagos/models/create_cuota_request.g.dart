@@ -2,6 +2,10 @@
 
 part of 'create_cuota_request.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 CreateCuotaRequest _$CreateCuotaRequestFromJson(Map<String, dynamic> json) =>
     CreateCuotaRequest(
       tipo: $enumDecode(_$TipoCuotaEnumMap, json['tipo']),
@@ -14,8 +18,7 @@ CreateCuotaRequest _$CreateCuotaRequestFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$CreateCuotaRequestToJson(
-        CreateCuotaRequest instance) =>
+Map<String, dynamic> _$CreateCuotaRequestToJson(CreateCuotaRequest instance) =>
     <String, dynamic>{
       'tipo': _$TipoCuotaEnumMap[instance.tipo]!,
       'concepto': instance.concepto,

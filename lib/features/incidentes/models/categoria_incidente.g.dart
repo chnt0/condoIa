@@ -2,6 +2,10 @@
 
 part of 'categoria_incidente.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 CategoriaIncidente _$CategoriaIncidenteFromJson(Map<String, dynamic> json) =>
     CategoriaIncidente(
       id: (json['id'] as num).toInt(),

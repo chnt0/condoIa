@@ -2,18 +2,22 @@
 
 part of 'condominio_sa.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 CondominiSa _$CondominiSaFromJson(Map<String, dynamic> json) => CondominiSa(
-      id: (json['id'] as num).toInt(),
-      nombre: json['nombre'] as String,
-      direccion: json['direccion'] as String?,
-      numUnidades: (json['numUnidades'] as num).toInt(),
-      activo: json['activo'] as bool,
-      totalUsuarios: (json['totalUsuarios'] as num).toInt(),
-      totalAdmins: (json['totalAdmins'] as num).toInt(),
-      createdAt: json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String),
-    );
+  id: (json['id'] as num).toInt(),
+  nombre: json['nombre'] as String,
+  direccion: json['direccion'] as String?,
+  numUnidades: (json['numUnidades'] as num).toInt(),
+  activo: json['activo'] as bool,
+  totalUsuarios: (json['totalUsuarios'] as num).toInt(),
+  totalAdmins: (json['totalAdmins'] as num).toInt(),
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
+);
 
 Map<String, dynamic> _$CondominiSaToJson(CondominiSa instance) =>
     <String, dynamic>{

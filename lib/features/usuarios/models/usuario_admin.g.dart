@@ -7,20 +7,20 @@ part of 'usuario_admin.dart';
 // **************************************************************************
 
 UsuarioAdmin _$UsuarioAdminFromJson(Map<String, dynamic> json) => UsuarioAdmin(
-      id: (json['id'] as num).toInt(),
-      username: json['username'] as String,
-      email: json['email'] as String,
-      nombreCompleto: json['nombreCompleto'] as String,
-      telefono: json['telefono'] as String?,
-      telefono2: json['telefono2'] as String?,
-      rol: $enumDecode(_$RolUsuarioEnumMap, json['rol']),
-      condominioId: (json['condominioId'] as num?)?.toInt(),
-      condominioNombre: json['condominioNombre'] as String?,
-      unidadHabitacional: json['unidadHabitacional'] as String?,
-      esPropietario: json['esPropietario'] as bool,
-      activo: json['activo'] as bool,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-    );
+  id: (json['id'] as num).toInt(),
+  username: json['username'] as String,
+  email: json['email'] as String,
+  nombreCompleto: json['nombreCompleto'] as String,
+  telefono: json['telefono'] as String?,
+  telefono2: json['telefono2'] as String?,
+  rol: $enumDecode(_$RolUsuarioEnumMap, json['rol']),
+  condominioId: (json['condominioId'] as num?)?.toInt(),
+  condominioNombre: json['condominioNombre'] as String?,
+  unidadHabitacional: json['unidadHabitacional'] as String?,
+  esPropietario: json['esPropietario'] as bool,
+  activo: json['activo'] as bool,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+);
 
 Map<String, dynamic> _$UsuarioAdminToJson(UsuarioAdmin instance) =>
     <String, dynamic>{

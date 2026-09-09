@@ -2,14 +2,18 @@
 
 part of 'comentario.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 Comentario _$ComentarioFromJson(Map<String, dynamic> json) => Comentario(
-      id: (json['id'] as num).toInt(),
-      incidenteId: (json['incidenteId'] as num).toInt(),
-      usuarioId: (json['usuarioId'] as num).toInt(),
-      usuarioNombre: json['usuarioNombre'] as String,
-      comentario: json['comentario'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-    );
+  id: (json['id'] as num).toInt(),
+  incidenteId: (json['incidenteId'] as num).toInt(),
+  usuarioId: (json['usuarioId'] as num).toInt(),
+  usuarioNombre: json['usuarioNombre'] as String,
+  comentario: json['comentario'] as String,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+);
 
 Map<String, dynamic> _$ComentarioToJson(Comentario instance) =>
     <String, dynamic>{

@@ -2,6 +2,10 @@
 
 part of 'cuota_response.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 CuotaResponse _$CuotaResponseFromJson(Map<String, dynamic> json) =>
     CuotaResponse(
       id: (json['id'] as num).toInt(),

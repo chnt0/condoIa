@@ -2,17 +2,21 @@
 
 part of 'reservacion.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 Reservacion _$ReservacionFromJson(Map<String, dynamic> json) => Reservacion(
-      id: (json['id'] as num).toInt(),
-      areaComunId: (json['areaComunId'] as num).toInt(),
-      areaComunNombre: json['areaComunNombre'] as String,
-      usuarioId: (json['usuarioId'] as num).toInt(),
-      usuarioNombre: json['usuarioNombre'] as String,
-      fechaHoraInicio: DateTime.parse(json['fechaHoraInicio'] as String),
-      fechaHoraFin: DateTime.parse(json['fechaHoraFin'] as String),
-      estado: $enumDecode(_$EstadoReservacionEnumMap, json['estado']),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-    );
+  id: (json['id'] as num).toInt(),
+  areaComunId: (json['areaComunId'] as num).toInt(),
+  areaComunNombre: json['areaComunNombre'] as String,
+  usuarioId: (json['usuarioId'] as num).toInt(),
+  usuarioNombre: json['usuarioNombre'] as String,
+  fechaHoraInicio: DateTime.parse(json['fechaHoraInicio'] as String),
+  fechaHoraFin: DateTime.parse(json['fechaHoraFin'] as String),
+  estado: $enumDecode(_$EstadoReservacionEnumMap, json['estado']),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+);
 
 Map<String, dynamic> _$ReservacionToJson(Reservacion instance) =>
     <String, dynamic>{

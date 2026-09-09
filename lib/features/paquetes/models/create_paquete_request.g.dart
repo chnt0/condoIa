@@ -2,20 +2,24 @@
 
 part of 'create_paquete_request.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 CreatePaqueteRequest _$CreatePaqueteRequestFromJson(
-        Map<String, dynamic> json) =>
-    CreatePaqueteRequest(
-      usuarioDestinatarioId: (json['usuarioDestinatarioId'] as num).toInt(),
-      descripcion: json['descripcion'] as String,
-      notas: json['notas'] as String?,
-      foto: json['foto'] as String?,
-    );
+  Map<String, dynamic> json,
+) => CreatePaqueteRequest(
+  usuarioDestinatarioId: (json['usuarioDestinatarioId'] as num).toInt(),
+  descripcion: json['descripcion'] as String,
+  notas: json['notas'] as String?,
+  foto: json['foto'] as String?,
+);
 
 Map<String, dynamic> _$CreatePaqueteRequestToJson(
-        CreatePaqueteRequest instance) =>
-    <String, dynamic>{
-      'usuarioDestinatarioId': instance.usuarioDestinatarioId,
-      'descripcion': instance.descripcion,
-      'notas': instance.notas,
-      'foto': instance.foto,
-    };
+  CreatePaqueteRequest instance,
+) => <String, dynamic>{
+  'usuarioDestinatarioId': instance.usuarioDestinatarioId,
+  'descripcion': instance.descripcion,
+  'notas': instance.notas,
+  'foto': instance.foto,
+};

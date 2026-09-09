@@ -2,16 +2,20 @@
 
 part of 'confirmar_pago_request.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 ConfirmarPagoRequest _$ConfirmarPagoRequestFromJson(
-        Map<String, dynamic> json) =>
-    ConfirmarPagoRequest(
-      confirmado: json['confirmado'] as bool,
-      notasAdmin: json['notasAdmin'] as String?,
-    );
+  Map<String, dynamic> json,
+) => ConfirmarPagoRequest(
+  confirmado: json['confirmado'] as bool,
+  notasAdmin: json['notasAdmin'] as String?,
+);
 
 Map<String, dynamic> _$ConfirmarPagoRequestToJson(
-        ConfirmarPagoRequest instance) =>
-    <String, dynamic>{
-      'confirmado': instance.confirmado,
-      'notasAdmin': instance.notasAdmin,
-    };
+  ConfirmarPagoRequest instance,
+) => <String, dynamic>{
+  'confirmado': instance.confirmado,
+  'notasAdmin': instance.notasAdmin,
+};

@@ -2,6 +2,10 @@
 
 part of 'residente_basico.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 ResidenteBasico _$ResidenteBasicoFromJson(Map<String, dynamic> json) =>
     ResidenteBasico(
       id: (json['id'] as num).toInt(),

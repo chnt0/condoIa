@@ -2,8 +2,11 @@
 
 part of 'reportar_pago_request.dart';
 
-ReportarPagoRequest _$ReportarPagoRequestFromJson(
-        Map<String, dynamic> json) =>
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+ReportarPagoRequest _$ReportarPagoRequestFromJson(Map<String, dynamic> json) =>
     ReportarPagoRequest(
       referenciaPago: json['referenciaPago'] as String,
       notasUsuario: json['notasUsuario'] as String?,
@@ -11,9 +14,9 @@ ReportarPagoRequest _$ReportarPagoRequestFromJson(
     );
 
 Map<String, dynamic> _$ReportarPagoRequestToJson(
-        ReportarPagoRequest instance) =>
-    <String, dynamic>{
-      'referenciaPago': instance.referenciaPago,
-      'notasUsuario': instance.notasUsuario,
-      'comprobanteFoto': instance.comprobanteFoto,
-    };
+  ReportarPagoRequest instance,
+) => <String, dynamic>{
+  'referenciaPago': instance.referenciaPago,
+  'notasUsuario': instance.notasUsuario,
+  'comprobanteFoto': instance.comprobanteFoto,
+};

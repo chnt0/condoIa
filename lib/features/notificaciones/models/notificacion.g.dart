@@ -2,16 +2,20 @@
 
 part of 'notificacion.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
 Notificacion _$NotificacionFromJson(Map<String, dynamic> json) => Notificacion(
-      id: (json['id'] as num).toInt(),
-      titulo: json['titulo'] as String,
-      mensaje: json['mensaje'] as String,
-      segmento: $enumDecode(_$SegmentoNotificacionEnumMap, json['segmento']),
-      edificio: json['edificio'] as String?,
-      adminCreadorId: (json['adminCreadorId'] as num).toInt(),
-      adminCreadorNombre: json['adminCreadorNombre'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-    );
+  id: (json['id'] as num).toInt(),
+  titulo: json['titulo'] as String,
+  mensaje: json['mensaje'] as String,
+  segmento: $enumDecode(_$SegmentoNotificacionEnumMap, json['segmento']),
+  edificio: json['edificio'] as String?,
+  adminCreadorId: (json['adminCreadorId'] as num).toInt(),
+  adminCreadorNombre: json['adminCreadorNombre'] as String,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+);
 
 Map<String, dynamic> _$NotificacionToJson(Notificacion instance) =>
     <String, dynamic>{
