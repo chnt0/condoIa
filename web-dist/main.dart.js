@@ -58630,7 +58630,7 @@ A.acR.prototype={
 cp(){var s=this
 return A.a6(["error",s.a,"message",s.b,"code",s.c,"timestamp",s.d],t.N,t.z)}}
 A.aZ8.prototype={
-cp(){return A.a6(["token",this.a,"usuario",this.b],t.N,t.z)}}
+cp(){return A.a6(["token",this.a,"user",this.b],t.N,t.z)}}
 A.wx.prototype={
 I(){return"Rol."+this.b}}
 A.Lb.prototype={
@@ -58989,7 +58989,7 @@ return A.j(n.hf("/api/auth/login",A.a6(["username",a,"password",b],t.N,t.z)),$as
 case 3:m=d
 l=J.ab(m)
 k=A.aq(l.h(m,"token"))
-l=A.b74(t.P.a(l.h(m,"usuario")))
+l=A.b74(t.P.a(l.h(m,"user")))
 o=p.b
 s=4
 return A.j(o.C4(k),$async$lz)
