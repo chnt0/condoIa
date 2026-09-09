@@ -69,7 +69,7 @@ public class UsuarioService {
         }
         long usuariosEnUnidad =
                 usuarioRepository.countByCondominioIdAndUnidadHabitacionalAndActivoTrue(
-                        request.getCondominioId(),
+                        TenantContext.getCondominioId(),
                         request.getUnidadHabitacional()
                 );
         if(usuariosEnUnidad>=2){
