@@ -249,7 +249,7 @@ class _RegistrarVisitaDirectaScreenState
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          '${_destinatario!.unidadHabitacional ?? ""} — ${_destinatario!.nombreCompleto}',
+                          '${_destinatario!.unidadHabitacional ?? ""} — ${_destinatario!.nombreCompleto} \n ${_destinatario!.telefono ?? ""} - ${_destinatario!.telefono2 ?? ""}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
