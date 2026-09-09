@@ -67,6 +67,20 @@ public class UsuarioService {
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("El email '" + request.getEmail() + "' ya está en uso");
         }
+        long usuariosEnUnidad =
+                usuarioRepository.countByCondominioIdAndUnidadHabitacionalAndActivoTrue(
+                        request.getCondominioId(),
+                        request.getUnidadHabitacional()
+                );
+        if(usuariosEnUnidad>=2){
+            throw new IllegalArgumentException("Ya existen 2 usuarios activos en la unidad habitacional " + request.getUnidadHabitacional());
+        }
+        String unidad = request.getUnidadHabitacional() != null
+                ? request.getUnidadHabitacional().trim()
+                : null;
+        if (unidad != null && unidad.isEmpty()) {
+            throw new IllegalArgumentException("La unidad habitacional no puede estar vacía");
+        }
 
         Long condominioId = TenantContext.getCondominioId();
         if (condominioId == null) {
@@ -101,7 +115,7 @@ public class UsuarioService {
                 .telefono2(request.getTelefono2())
                 .rol(request.getRol())
                 .condominio(condominio)
-                .unidadHabitacional(request.getUnidadHabitacional())
+                .unidadHabitacional(unidad)
                 .esPropietario(request.getEsPropietario() != null ? request.getEsPropietario() : false)
                 .activo(true)
                 .build();
