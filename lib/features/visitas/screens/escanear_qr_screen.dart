@@ -107,16 +107,23 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
         title: const Text('Validar QR'),
         actions: [
           TextButton.icon(
-            onPressed: () {
-              setState(() {
-                _usarCamara = !_usarCamara;
+              onPressed: () async {
                 if (_usarCamara) {
-                  _scannerController.start();
-                } else {
-                  _scannerController.stop();
+                  await _scannerController.stop();
+
+                  if (!mounted) return;
+
+                  setState(() {
+                    _usarCamara = false;
+                  });
+
+                  return;
                 }
-              });
-            },
+
+                setState(() {
+                  _usarCamara = true;
+                });
+              },
             icon: Icon(_usarCamara ? Icons.keyboard : Icons.camera_alt),
             label: Text(_usarCamara ? 'Manual' : 'Cámara'),
           ),
@@ -131,10 +138,11 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
       children: [
         MobileScanner(
           controller: _scannerController,
-          errorBuilder: (context, error, child) => _buildScannerError(error),
+          errorBuilder: (context, error) => _buildScannerError(error),
           onDetect: (capture) {
             final barcodes = capture.barcodes;
             final code = barcodes.isEmpty ? null : barcodes.first.rawValue;
+
             if (code != null && !_procesando && !_dialogOpen) {
               _scannerController.stop();
               _validar(code);
@@ -167,16 +175,41 @@ class _EscanearQrScreenState extends ConsumerState<EscanearQrScreen> {
     );
   }
 
-  String _mensajeError(MobileScannerException error) {
-    switch (error.errorCode) {
-      case MobileScannerErrorCode.permissionDenied:
-        return 'Permiso de cámara denegado. Actívalo en los ajustes del navegador o del dispositivo.';
-      case MobileScannerErrorCode.unsupported:
-        return 'Este dispositivo o navegador no soporta el escaneo de cámara. Usa la opción manual.';
-      default:
-        return 'No se pudo iniciar la cámara. Verifica los permisos e intenta de nuevo, o usa la opción manual.';
-    }
+String _mensajeError(MobileScannerException error) {
+  debugPrint('========== MOBILE SCANNER ERROR ==========');
+  debugPrint('Código: ${error.errorCode}');
+  debugPrint('Detalles: ${error.errorDetails}');
+  debugPrint('Excepción: $error');
+  debugPrint('==========================================');
+
+  switch (error.errorCode) {
+    case MobileScannerErrorCode.permissionDenied:
+      return '''
+Permiso de cámara denegado.
+
+Ve a Ajustes → Aplicaciones → tu aplicación
+→ Permisos → Cámara y permite el acceso.
+''';
+
+    case MobileScannerErrorCode.unsupported:
+      return '''
+Este dispositivo no soporta el escaneo
+mediante cámara.
+
+Utiliza la entrada manual.
+''';
+
+    default:
+      return '''
+No se pudo iniciar la cámara.
+
+Código: ${error.errorCode}
+
+${error.errorDetails?.message ?? error.toString()}
+''';
   }
+}
+
 
   Widget _buildScannerError(MobileScannerException error) {
     return ColoredBox(

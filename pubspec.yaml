@@ -49,7 +49,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
 
   # QR code scanner
-  mobile_scanner: ^6.0.0
+  mobile_scanner: ^7.4.0
 
   # File picker para carga masiva de usuarios
   file_picker: ^8.0.0
